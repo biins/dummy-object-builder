@@ -15,7 +15,7 @@ public class WrapperObjectBuilder<T> extends AbstractBuilder<T> implements Build
         super(cls);
     }
 
-    static <T> WrapperObjectBuilder<T> forClass(Class<T> cls) {
+    static <T> WrapperObjectBuilder<T> forType(Class<T> cls) {
         return new WrapperObjectBuilder<T>(cls);
     }
 

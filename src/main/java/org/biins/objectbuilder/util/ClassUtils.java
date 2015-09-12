@@ -15,4 +15,7 @@ public class ClassUtils {
         return WrapperTypeRegistry.WRAPPER_CLASSES.contains(cls);
     }
 
+    public static <T> boolean isArray(Class<T> cls) {
+        return cls.isArray();
+    }
 }

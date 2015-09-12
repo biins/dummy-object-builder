@@ -1,5 +1,7 @@
 package org.biins.objectbuilder.types.primitive;
 
+import org.apache.commons.lang.Validate;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,13 +24,15 @@ public class PrimitiveTypeRegistry {
 
     static {
         for (PrimitiveType<?> primitiveType : PRIMITIVE_TYPES) {
-            REGISTRY.put(primitiveType.getTypeClass(), primitiveType);
+            REGISTRY.put(primitiveType.getType(), primitiveType);
         }
     }
 
     @SuppressWarnings("unchecked")
     public static <T> PrimitiveType<T> get(Class<T> cls) {
-        return (PrimitiveType<T>) REGISTRY.get(cls);
+        PrimitiveType<?> value = REGISTRY.get(cls);
+        Validate.notNull(value, "Unknown type " + cls);
+        return (PrimitiveType<T>) value;
     }
 
 }

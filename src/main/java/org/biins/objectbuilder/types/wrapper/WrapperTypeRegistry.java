@@ -1,5 +1,7 @@
 package org.biins.objectbuilder.types.wrapper;
 
+import org.apache.commons.lang.Validate;
+
 import java.util.*;
 
 /**
@@ -34,13 +36,15 @@ public class WrapperTypeRegistry {
 
     static {
         for (WrapperType<?> primitiveType : PRIMITIVE_TYPES) {
-            REGISTRY.put(primitiveType.getTypeClass(), primitiveType);
+            REGISTRY.put(primitiveType.getType(), primitiveType);
         }
     }
 
     @SuppressWarnings("unchecked")
     public static <T> WrapperType<T> get(Class<T> cls) {
-        return (WrapperType<T>) REGISTRY.get(cls);
+        WrapperType<?> value = REGISTRY.get(cls);
+        Validate.notNull(value, "Unknown type " + cls);
+        return (WrapperType<T>) value;
     }
 
 }

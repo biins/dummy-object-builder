@@ -15,7 +15,7 @@ public class PrimitiveObjectBuilder<T> extends AbstractBuilder<T> implements Bui
         super(cls);
     }
 
-    static <T> PrimitiveObjectBuilder<T> forClass(Class<T> cls) {
+    static <T> PrimitiveObjectBuilder<T> forType(Class<T> cls) {
         return new PrimitiveObjectBuilder<T>(cls);
     }
 

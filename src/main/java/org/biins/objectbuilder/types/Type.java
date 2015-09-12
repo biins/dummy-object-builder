@@ -1,26 +1,20 @@
 package org.biins.objectbuilder.types;
 
-import java.util.Random;
-
 /**
  * @author Martin Janys
  */
 public abstract class Type<T> {
 
-    private final Class<T> cls;
+    private final Class<T> type;
     private final T defaultValue;
 
-    protected final Random random = new Random(System.currentTimeMillis());
-
-    public Type(Class<T> cls, T defaultValue) {
-        this.cls = cls;
+    public Type(Class<T> type, T defaultValue) {
+        this.type = type;
         this.defaultValue = defaultValue;
     }
 
-    public abstract T getRandomValue();
-
-    public Class<T> getTypeClass() {
-        return cls;
+    public Class<T> getType() {
+        return type;
     }
 
     public T getDefaultValue() {

@@ -12,7 +12,7 @@ import static org.testng.Assert.assertNull;
 /**
  * @author Martin Janys
  */
-public class PrimitivesWrapperTest {
+public class PrimitiveWrappersTest {
 
     @DataProvider(name = "buildStrategy")
     public static Object[][] buildStrategy() {
@@ -32,6 +32,7 @@ public class PrimitivesWrapperTest {
                 .onWrapperProperty().setWrapperStrategy(buildStrategy)
                 .build();
         Short s = DummyObject.forType(Short.class)
+                .onPrimitiveProperty().setPrimitiveStrategy(PrimitiveGeneratorStrategy.DEFAULT)
                 .onWrapperProperty().setWrapperStrategy(buildStrategy)
                 .build();
         Integer i = DummyObject.forType(Integer.class)

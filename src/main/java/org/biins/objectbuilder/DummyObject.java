@@ -8,6 +8,6 @@ import org.biins.objectbuilder.builder.ObjectBuilder;
 public class DummyObject {
 
     public static <T> ObjectBuilder<T> forType(Class<T> cls) {
-        return ObjectBuilder.forClass(cls);
+        return ObjectBuilder.forType(cls);
     }
 }
