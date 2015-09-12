@@ -103,43 +103,31 @@ public class ArrayObjectBuilder<T> extends AbstractBuilder<T> implements Builder
         if (ClassUtils.isArray(componentType)) {
             for (int i = 0; i < arraySize; i++) {
                 Object subArray = createArray(componentType.getComponentType(), subArraySize);
-                if (ClassUtils.isPrimitive(componentType)) {
-                    subArray = fillPrimitiveArray(subArray, componentType, subArraySize);
-                }
-                else if (ClassUtils.isWrapperClass(componentType)) {
-                    subArray = fillWrapperArray(subArray, componentType, subArraySize);
-                }
-                else if (ClassUtils.isArray(componentType)) {
-                    subArray = fillArrayArray(subArray, decreaseDimension(sizes));
+                if (ClassUtils.isArray(componentType)) {
+                    subArray = fillArrayWithArray(subArray, decreaseDimension(sizes));
                 }
                 else {
-                    throw new IllegalStateException("Unknown array component type");
+                    subArray = fillArrayWithValues(subArray, componentType, subArraySize);
                 }
 
                 Array.set(array, i, subArray);
             }
         }
         else {
-            if (ClassUtils.isPrimitive(arrayType.getComponentType())) {
-                array = fillPrimitiveArray(array, componentType, arraySize);
-            }
-            else if (ClassUtils.isWrapperClass(arrayType.getComponentType())) {
-                array = fillWrapperArray(array, arrayType.getComponentType(), arraySize);
-            }
-            else if (ClassUtils.isArray(arrayType.getComponentType())) {
-                array = fillArrayArray(array, decreaseDimension(sizes));
+            if (ClassUtils.isArray(arrayType.getComponentType())) {
+                array = fillArrayWithArray(array, decreaseDimension(sizes));
             }
             else {
-                throw new IllegalStateException("Unknown array component type");
+                array = fillArrayWithValues(array, arrayType.getComponentType(), arraySize);
             }
         }
 
         return (T) array;
     }
 
-    private Object fillWrapperArray(Object array, Class<?> componentType, int index) {
+    private Object fillArrayWithValues(Object array, Class<?> componentType, int index) {
         for (int i = 0; i < index; i++) {
-            Object value =  WrapperObjectBuilder.forType(componentType).setWrapperStrategy(wrapperStrategy).build();
+            Object value =  objectForType(componentType);
             Array.set(array, i, value);
         }
 
@@ -147,35 +135,28 @@ public class ArrayObjectBuilder<T> extends AbstractBuilder<T> implements Builder
 
     }
 
-    private Object fillPrimitiveArray(Object array, Class<?> componentType, int index) {
-        for (int i = 0; i < index; i++) {
-            Object value = PrimitiveObjectBuilder.forType(componentType).setPrimitiveStrategy(primitiveStrategy).build();
-            Array.set(array, i, value);
-        }
-
-        return array;
-    }
-
-    private Object fillArrayArray(Object array, int ... sizes) {
+    private Object fillArrayWithArray(Object array, int ... sizes) {
         int maxIndex = sizes.length > 0 ? sizes[0] : 0;
         for (int i = 0; i < maxIndex; i++) {
             Class<?> componentType = array.getClass().getComponentType();
-            Object value = null;
+            Object value;
             if (ClassUtils.isArray(componentType)) {
                 value = buildArray(new ArrayType(componentType), decreaseDimension(sizes));
             }
             else {
-                if (ClassUtils.isPrimitive(componentType)) {
-                    value = PrimitiveObjectBuilder.forType(componentType).setPrimitiveStrategy(primitiveStrategy).build();
-                }
-                else if (ClassUtils.isWrapperClass(componentType)) {
-                    value = WrapperObjectBuilder.forType(componentType).setWrapperStrategy(wrapperStrategy).build();
-                }
+                value = objectForType(componentType);
             }
             Array.set(array, i, value);
         }
 
         return array;
+    }
+
+    private Object objectForType(Class<?> type) {
+        return ObjectBuilder.forType(type)
+                .onPrimitiveProperty().setPrimitiveStrategy(primitiveStrategy)
+                .onWrapperProperty().setWrapperStrategy(wrapperStrategy)
+                .build();
     }
 
     private int[] decreaseDimension(int[] size) {

@@ -269,6 +269,26 @@ public class ArraysTest {
                 .setSize(2, 1)
                 .build();
 
+        long[][][] l = DummyObject.forType(long[][][].class)
+                .onArrayProperty().setArrayStrategy(buildStrategy, primitiveGeneratorStrategy, wrapperGeneratorStrategy)
+                .setSize(3, 2, 1)
+                .build();
+
+        Float[][][] f = DummyObject.forType(Float[][][].class)
+                .onArrayProperty().setArrayStrategy(buildStrategy, primitiveGeneratorStrategy, wrapperGeneratorStrategy)
+                .setSize(3)
+                .build();
+
+        double[][][] d = DummyObject.forType(double[][][].class)
+                .onArrayProperty().setArrayStrategy(buildStrategy, primitiveGeneratorStrategy, wrapperGeneratorStrategy)
+                .setSize(3, 0, 1)
+                .build();
+
+        Character[][][][] c = DummyObject.forType(Character[][][][].class)
+                .onArrayProperty().setArrayStrategy(buildStrategy, primitiveGeneratorStrategy, wrapperGeneratorStrategy)
+                .setSize(1, 1, 1, 1)
+                .build();
+
         // asserts
         switch (primitiveGeneratorStrategy) {
             case DEFAULT:
@@ -280,37 +300,40 @@ public class ArraysTest {
                         new Integer[]{ConstantPool.INTEGER_WRAPPER_DEFAULT},
                         new Integer[]{ConstantPool.INTEGER_WRAPPER_DEFAULT}
                 }));
-                break;
-            case MIN:
-                assertTrue(Arrays.deepEquals(s, new short[][]{
-                        new short[]{},
-                        new short[]{}
+                assertTrue(Arrays.deepEquals(l, new long[][][]{
+                        new long[][]{
+                                new long[]{ConstantPool.LONG_DEFAULT},
+                                new long[]{ConstantPool.LONG_DEFAULT}
+                        },
+                        new long[][]{
+                                new long[]{ConstantPool.LONG_DEFAULT},
+                                new long[]{ConstantPool.LONG_DEFAULT}
+                        },
+                        new long[][]{
+                                new long[]{ConstantPool.LONG_DEFAULT},
+                                new long[]{ConstantPool.LONG_DEFAULT}
+                        }
                 }));
-                assertTrue(Arrays.deepEquals(i, new Integer[][]{
-                        new Integer[]{Integer.MIN_VALUE},
-                        new Integer[]{Integer.MIN_VALUE}
+                assertTrue(Arrays.deepEquals(f, new Float[][][]{
+                        new Float[][]{},
+                        new Float[][]{},
+                        new Float[][]{}
                 }));
-                break;
-            case MAX:
-                assertTrue(Arrays.deepEquals(s, new short[][]{
-                        new short[]{},
-                        new short[]{}
+                assertTrue(Arrays.deepEquals(d, new double[][][]{
+                        new double[][]{},
+                        new double[][]{},
+                        new double[][]{}
                 }));
-                assertTrue(Arrays.deepEquals(i, new Integer[][]{
-                        new Integer[]{Integer.MAX_VALUE},
-                        new Integer[]{Integer.MAX_VALUE}
+                assertTrue(Arrays.deepEquals(c, new Character[][][][]{
+                        new Character[][][]{
+                                new Character[][]{
+                                        new Character[]{
+                                                ConstantPool.CHARACTER_WRAPPER_DEFAULT
+                                        }
+                                }
+                        }
                 }));
                 break;
         }
-
-        switch (wrapperGeneratorStrategy) {
-            case DEFAULT:
-                break;
-            case MIN:
-                break;
-            case MAX:
-                break;
-        }
-
     }
 }
