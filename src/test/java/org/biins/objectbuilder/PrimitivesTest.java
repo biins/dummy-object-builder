@@ -24,28 +24,28 @@ public class PrimitivesTest {
 
     @Test(dataProvider = "buildStrategy")
     public void primitiveObject(PrimitiveGeneratorStrategy buildStrategy) {
-        byte b = DummyObject.forType(byte.class)
+        byte b = GenerateObject.forType(byte.class)
                 .onPrimitiveProperty().setPrimitiveStrategy(buildStrategy)
                 .build();
-        short s = DummyObject.forType(short.class)
+        short s = GenerateObject.forType(short.class)
                 .onPrimitiveProperty().setPrimitiveStrategy(buildStrategy)
                 .build();
-        int i = DummyObject.forType(int.class)
+        int i = GenerateObject.forType(int.class)
                 .onPrimitiveProperty().setPrimitiveStrategy(buildStrategy)
                 .build();
-        long l = DummyObject.forType(long.class)
+        long l = GenerateObject.forType(long.class)
                 .onPrimitiveProperty().setPrimitiveStrategy(buildStrategy)
                 .build();
-        float f = DummyObject.forType(float.class)
+        float f = GenerateObject.forType(float.class)
                 .onPrimitiveProperty().setPrimitiveStrategy(buildStrategy)
                 .build();
-        double d = DummyObject.forType(double.class)
+        double d = GenerateObject.forType(double.class)
                 .onPrimitiveProperty().setPrimitiveStrategy(buildStrategy)
                 .build();
-        char c = DummyObject.forType(char.class)
+        char c = GenerateObject.forType(char.class)
                 .onPrimitiveProperty().setPrimitiveStrategy(buildStrategy)
                 .build();
-        boolean bool = DummyObject.forType(boolean.class)
+        boolean bool = GenerateObject.forType(boolean.class)
                 .onPrimitiveProperty().setPrimitiveStrategy(buildStrategy)
                 .build();
 

@@ -27,30 +27,30 @@ public class PrimitiveWrappersTest {
 
     @Test(dataProvider = "buildStrategy")
     public void wrapperObject(WrapperGeneratorStrategy buildStrategy) {
-        Byte b = DummyObject.forType(Byte.class)
+        Byte b = GenerateObject.forType(Byte.class)
                 .onPrimitiveProperty().setPrimitiveStrategy(PrimitiveGeneratorStrategy.DEFAULT)
                 .onWrapperProperty().setWrapperStrategy(buildStrategy)
                 .build();
-        Short s = DummyObject.forType(Short.class)
+        Short s = GenerateObject.forType(Short.class)
                 .onPrimitiveProperty().setPrimitiveStrategy(PrimitiveGeneratorStrategy.DEFAULT)
                 .onWrapperProperty().setWrapperStrategy(buildStrategy)
                 .build();
-        Integer i = DummyObject.forType(Integer.class)
+        Integer i = GenerateObject.forType(Integer.class)
                 .onWrapperProperty().setWrapperStrategy(buildStrategy)
                 .build();
-        Long l = DummyObject.forType(Long.class)
+        Long l = GenerateObject.forType(Long.class)
                 .onWrapperProperty().setWrapperStrategy(buildStrategy)
                 .build();
-        Float f = DummyObject.forType(Float.class)
+        Float f = GenerateObject.forType(Float.class)
                 .onWrapperProperty().setWrapperStrategy(buildStrategy)
                 .build();
-        Double d = DummyObject.forType(Double.class)
+        Double d = GenerateObject.forType(Double.class)
                 .onWrapperProperty().setWrapperStrategy(buildStrategy)
                 .build();
-        Character c = DummyObject.forType(Character.class)
+        Character c = GenerateObject.forType(Character.class)
                 .onWrapperProperty().setWrapperStrategy(buildStrategy)
                 .build();
-        Boolean bool = DummyObject.forType(Boolean.class)
+        Boolean bool = GenerateObject.forType(Boolean.class)
                 .onWrapperProperty().setWrapperStrategy(buildStrategy)
                 .build();
 

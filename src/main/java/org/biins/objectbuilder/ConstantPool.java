@@ -21,4 +21,7 @@ public class ConstantPool {
     public static final Double DOUBLE_WRAPPER_DEFAULT = 0.0d;
     public static final Character CHARACTER_WRAPPER_DEFAULT = '\u0000';
     public static final Boolean BOOLEAN_WRAPPER_DEFAULT = false;
+
+    public static final String EMPTY_STRING = "";
+    public static final String STRING_DEFAULT = EMPTY_STRING;
 }

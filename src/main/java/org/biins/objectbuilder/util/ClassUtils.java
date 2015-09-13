@@ -18,4 +18,8 @@ public class ClassUtils {
     public static <T> boolean isArray(Class<T> cls) {
         return cls.isArray();
     }
+
+    public static <T> boolean isString(Class<T> cls) {
+        return cls.isAssignableFrom(String.class);
+    }
 }

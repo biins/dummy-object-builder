@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.biins</groupId>
-    <artifactId>dummy-object-builder</artifactId>
+    <artifactId>generate-object-builder</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
