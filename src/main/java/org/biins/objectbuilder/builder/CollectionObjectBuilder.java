@@ -124,21 +124,21 @@ public class CollectionObjectBuilder<T> extends AbstractBuilder<T> implements Bu
             ArrayList list = new ArrayList(collectionSize);
             for (int i = 0; i < collectionSize; i++) {
                 Collection subCollection;
-                if (ClassUtils.isCollection(elementType.next().getType())) {
-                    subCollection = createCollectionWithCollection(elementType, elementType.next(), decreaseDimension(sizes));
+                if (elementType.next() != null && ClassUtils.isCollection(elementType.next().getType())) {
+                    subCollection = createCollectionWithCollections(elementType, elementType.next(), decreaseDimension(sizes));
                 }
                 else {
                     subCollection = createCollectionWithValues(elementType.getType(), elementType.next(), subCollectionSize);
                 }
 
-                list.set(i, subCollection);
+                list.add(i, subCollection);
             }
-            collection = createCollection(elementType.getType(), list);
+            collection = createCollection(collectionType.getType(), list);
         }
         else {
             // element is value
             if (elementType.next() != null && ClassUtils.isCollection(elementType.next().getType())) {
-                collection = createCollectionWithCollection(elementType, elementType.next(), decreaseDimension(sizes));
+                collection = createCollectionWithCollections(elementType, elementType.next(), decreaseDimension(sizes));
             }
             else {
                 collection = createCollectionWithValues(collectionType.getType(), elementType, collectionSize);
@@ -165,19 +165,19 @@ public class CollectionObjectBuilder<T> extends AbstractBuilder<T> implements Bu
         return createCollection(collectionType, list);
     }
 
-    private Collection createCollectionWithCollection(Types<?> collectionType, Types<?> elementType, int ... sizes) {
+    private Collection createCollectionWithCollections(Types<?> collectionType, Types<?> elementType, int... sizes) {
         List list = new ArrayList();
         int maxIndex = countSize(sizes, 0);
 
         for (int i = 0; i < maxIndex; i++) {
             Object value;
-            if (ClassUtils.isCollection(elementType.getType())) {
-                value = buildCollection(new CollectionType(collectionType.getType()), elementType, decreaseDimension(sizes));
+            if (elementType != null && ClassUtils.isCollection(elementType.getType())) {
+                value = buildCollection(new CollectionType(elementType.getType()), elementType.next(), decreaseDimension(sizes));
             }
             else {
                 value = objectForType(elementType.getType());
             }
-            list.set(i, value);
+            list.add(i, value);
         }
 
         return createCollection(collectionType.getType(), list);
@@ -191,7 +191,7 @@ public class CollectionObjectBuilder<T> extends AbstractBuilder<T> implements Bu
     }
 
     private int[] decreaseDimension(int[] size) {
-        return size.length > 1 ? Arrays.copyOfRange(size, 1, size.length) : new int[]{0};
+        return size.length > 1 ? Arrays.copyOfRange(size, 1, size.length) : new int[]{collectionGeneratorStrategy.equals(CollectionGeneratorStrategy.SINGLETON) ? 1 : 0};
     }
 
     private Collection createCollection(Class<?> collectionType, List values) {

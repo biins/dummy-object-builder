@@ -8,15 +8,18 @@ public class Types<TYPE> {
     private final Class<TYPE> type;
 
     private Types<?> next;
+    private Types<?> last;
 
     private Types(Class<TYPE> type) {
         this.type = type;
+        this.last = this;
     }
 
-    public <T> Types<T> of(Class<T> type) {
-        Types<T> next = new Types<>(type);
-        this.next = next;
-        return next;
+    public Types<TYPE> of(Class<?> type) {
+        Types<?> next = new Types<>(type);
+        this.last.next = next;
+        this.last = this.last.next;
+        return this;
     }
 
     public Class<TYPE> getType() {

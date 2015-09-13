@@ -155,9 +155,38 @@ public class CollectionsTest {
 
         switch (buildStrategy) {
             case DEFAULT:
+                break;
             case VALUE:
                 break;
+            case SINGLETON:
+                assertEquals(list, Collections.singletonList(
+                        Collections.singletonList("")
+                ));
+                assertEquals(set, Collections.singleton(
+                        Collections.singleton(0)
+                ));
+                assertEquals(queue, new LinkedList<>(
+                        Arrays.asList(
+                                new LinkedList<>(
+                                        Arrays.asList(0d)
+                                )
+                        )
+                ));
+                assertEquals(listSet, Collections.singletonList(
+                        Collections.singleton(0f)
+                ));
+                assertEquals(collectionOfCollection, Collections.singletonList(
+                        Collections.singletonList(
+                                Collections.singletonList(false)
+                        )
+                ));
+                break;
             case NULL:
+                assertNull(list);
+                assertNull(set);
+                assertNull(queue);
+                assertNull(listSet);
+                assertNull(collectionOfCollection);
                 break;
         }
 
