@@ -2,6 +2,8 @@ package org.biins.objectbuilder.util;
 
 import org.biins.objectbuilder.types.wrapper.WrapperTypeRegistry;
 
+import java.util.Collection;
+
 /**
  * @author Martin Janys
  */
@@ -20,6 +22,10 @@ public class ClassUtils {
     }
 
     public static <T> boolean isString(Class<T> cls) {
-        return cls.isAssignableFrom(String.class);
+        return String.class.isAssignableFrom(cls);
+    }
+
+    public static <T> boolean isCollection(Class<T> cls) {
+        return Collection.class.isAssignableFrom(cls);
     }
 }

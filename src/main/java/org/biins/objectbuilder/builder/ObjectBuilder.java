@@ -1,9 +1,8 @@
 package org.biins.objectbuilder.builder;
 
-import org.biins.objectbuilder.builder.strategy.ArrayGeneratorStrategy;
-import org.biins.objectbuilder.builder.strategy.PrimitiveGeneratorStrategy;
-import org.biins.objectbuilder.builder.strategy.StringGeneratorStrategy;
-import org.biins.objectbuilder.builder.strategy.WrapperGeneratorStrategy;
+import org.apache.commons.lang.Validate;
+import org.biins.objectbuilder.builder.strategy.*;
+import org.biins.objectbuilder.types.Types;
 import org.biins.objectbuilder.util.ClassUtils;
 
 /**
@@ -15,6 +14,9 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
     private final WrapperObjectBuilder wrapperObjectBuilder;
     private final ArrayObjectBuilder arrayObjectBuilder;
     private final StringObjectBuilder stringObjectBuilder;
+    private final CollectionObjectBuilder collectionObjectBuilder;
+
+    private Types<?> collectionElementType;
 
     protected ObjectBuilder(Class<T> cls) {
         super(cls);
@@ -22,10 +24,11 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
         wrapperObjectBuilder = new WrapperObjectBuilder();
         arrayObjectBuilder = new ArrayObjectBuilder();
         stringObjectBuilder = new StringObjectBuilder();
+        collectionObjectBuilder = new CollectionObjectBuilder();
     }
 
     public static <T> ObjectBuilder<T> forType(Class<T> cls) {
-        return new ObjectBuilder<T>(cls);
+        return new ObjectBuilder<>(cls);
     }
 
     public PrimitiveObjectBuilder onPrimitiveProperty() {
@@ -44,6 +47,10 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
         return stringObjectBuilder;
     }
 
+    public CollectionObjectBuilder onCollectionProperty() {
+        return collectionObjectBuilder;
+    }
+
     public T build() {
         if (ClassUtils.isPrimitive(cls)) {
             return primitiveObjectBuilder.buildPrimitive();
@@ -57,11 +64,25 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
         else if (ClassUtils.isString(cls)) {
             return stringObjectBuilder.buildString();
         }
+        else if (ClassUtils.isCollection(cls)) {
+            Validate.notNull(collectionElementType, "Generation collection without element type. Use ObjectBuilder#collectionOf() method to setup");
+            return collectionObjectBuilder.of(collectionElementType).buildCollection();
+        }
 
         throw new IllegalStateException("Unknown type");
     }
 
+    public ObjectBuilder<T> collectionOf(Types<?> type) {
+        this.collectionElementType = type;
+        return this;
+    }
+
     private abstract class BuilderTransitions {
+
+        public ObjectBuilder<T> and() {
+            return ObjectBuilder.this;
+        }
+
         public PrimitiveObjectBuilder onPrimitiveProperty() {
             return ObjectBuilder.this.primitiveObjectBuilder;
         }
@@ -76,6 +97,10 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
 
         public StringObjectBuilder onStringProperty() {
             return ObjectBuilder.this.stringObjectBuilder;
+        }
+
+        public CollectionObjectBuilder onCollectionProperty() {
+            return ObjectBuilder.this.collectionObjectBuilder;
         }
     }
 
@@ -169,6 +194,59 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
 
         public T buildArray() {
             return builder.buildArray();
+        }
+    }
+
+    public class CollectionObjectBuilder extends BuilderTransitions implements Builder<T> {
+
+        private final org.biins.objectbuilder.builder.CollectionObjectBuilder<T> builder;
+
+        protected CollectionObjectBuilder() {
+            builder = org.biins.objectbuilder.builder.CollectionObjectBuilder.forType(cls);
+        }
+
+        private CollectionObjectBuilder of(Types<?> types) {
+            builder.of(types);
+            return this;
+        }
+
+        @Override
+        public T build() {
+            return ObjectBuilder.this.build();
+        }
+
+        public CollectionObjectBuilder setSize(int size) {
+            builder.setSize(size);
+            return this;
+        }
+
+        public CollectionObjectBuilder setSize(int ... size) {
+            builder.setSize(size);
+            return this;
+        }
+
+        public CollectionObjectBuilder setCollectionStrategy(CollectionGeneratorStrategy strategy) {
+            builder.setCollectionStrategy(strategy);
+            return this;
+        }
+
+        public CollectionObjectBuilder setCollectionStrategy(PrimitiveGeneratorStrategy strategy) {
+            builder.setCollectionStrategy(strategy);
+            return this;
+        }
+
+        public CollectionObjectBuilder setCollectionStrategy(WrapperGeneratorStrategy strategy) {
+            builder.setCollectionStrategy(strategy);
+            return this;
+        }
+
+        public CollectionObjectBuilder setCollectionStrategy(CollectionGeneratorStrategy collectionStrategy, PrimitiveGeneratorStrategy primitiveStrategy, WrapperGeneratorStrategy wrapperStrategy, ArrayGeneratorStrategy arrayStrategy) {
+            builder.setCollectionStrategy(collectionStrategy, primitiveStrategy, wrapperStrategy, arrayStrategy);
+            return this;
+        }
+
+        public T buildCollection() {
+            return builder.buildCollection();
         }
     }
 

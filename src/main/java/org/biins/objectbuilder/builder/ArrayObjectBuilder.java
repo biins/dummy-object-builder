@@ -115,6 +115,7 @@ public class ArrayObjectBuilder<T> extends AbstractBuilder<T> implements Builder
         }
         else {
             if (ClassUtils.isArray(arrayType.getComponentType())) {
+                // todo: unused ?
                 array = fillArrayWithArray(array, decreaseDimension(sizes));
             }
             else {
