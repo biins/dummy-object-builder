@@ -42,21 +42,21 @@ public class CollectionsTest {
     @Test(dataProvider = "buildStrategy", expectedExceptions = IllegalArgumentException.class)
     public void collectionSizeIllegalArgument(CollectionGeneratorStrategy buildStrategy) {
         GenerateObject.forType(ArrayList.class)
-                .onCollectionProperty().setCollectionStrategy(buildStrategy).setSize(-1)
+                .onCollectionProperty().setGeneratorStrategy(buildStrategy).setSize(-1)
                 .build();
     }
 
     @Test(dataProvider = "buildStrategy", expectedExceptions = IllegalArgumentException.class)
     public void collectionSizeIllegalArgument2(CollectionGeneratorStrategy buildStrategy) {
         GenerateObject.forType(List.class)
-                .onCollectionProperty().setCollectionStrategy(buildStrategy).setSize(1, 2, -1)
+                .onCollectionProperty().setGeneratorStrategy(buildStrategy).setSize(1, 2, -1)
                 .build();
     }
 
     @Test(dataProvider = "buildStrategy", expectedExceptions = IllegalArgumentException.class)
     public void collectionSizeIllegalArgumentMissingType(CollectionGeneratorStrategy buildStrategy) {
         GenerateObject.forType(List.class)
-                .onCollectionProperty().setCollectionStrategy(buildStrategy)
+                .onCollectionProperty().setGeneratorStrategy(buildStrategy)
                 .build();
     }
 
@@ -67,34 +67,34 @@ public class CollectionsTest {
     @Test(dataProvider = "buildStrategy")
     public void collectionObject(CollectionGeneratorStrategy buildStrategy) {
         List<String> list = GenerateObject.forType(List.class).collectionOf(Types.typeOf(String.class))
-                .onCollectionProperty().setCollectionStrategy(buildStrategy)
-                .onPrimitiveProperty().setPrimitiveStrategy(PrimitiveGeneratorStrategy.DEFAULT)
-                .onWrapperProperty().setWrapperStrategy(WrapperGeneratorStrategy.DEFAULT)
-                .onArrayProperty().setArrayStrategy(ArrayGeneratorStrategy.DEFAULT)
+                .onCollectionProperty().setGeneratorStrategy(buildStrategy)
+                .onPrimitiveProperty().setGeneratorStrategy(PrimitiveGeneratorStrategy.DEFAULT)
+                .onWrapperProperty().setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT)
+                .onArrayProperty().setGeneratorStrategy(ArrayGeneratorStrategy.DEFAULT)
                 .build();
         Set<Integer> set = GenerateObject.forType(Set.class).collectionOf(Types.typeOf(Integer.class))
-                .onWrapperProperty().setWrapperStrategy(WrapperGeneratorStrategy.DEFAULT)
-                .onCollectionProperty().setCollectionStrategy(buildStrategy).setSize(2)
-                .onPrimitiveProperty().setPrimitiveStrategy(PrimitiveGeneratorStrategy.DEFAULT)
-                .onArrayProperty().setArrayStrategy(ArrayGeneratorStrategy.DEFAULT)
+                .onWrapperProperty().setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT)
+                .onCollectionProperty().setGeneratorStrategy(buildStrategy).setSize(2)
+                .onPrimitiveProperty().setGeneratorStrategy(PrimitiveGeneratorStrategy.DEFAULT)
+                .onArrayProperty().setGeneratorStrategy(ArrayGeneratorStrategy.DEFAULT)
                 .build();
         Queue<Double> queue = GenerateObject.forType(Queue.class).collectionOf(Types.typeOf(Double.class))
-                .onWrapperProperty().setWrapperStrategy(WrapperGeneratorStrategy.DEFAULT)
-                .onPrimitiveProperty().setPrimitiveStrategy(PrimitiveGeneratorStrategy.DEFAULT)
-                .onCollectionProperty().setCollectionStrategy(buildStrategy).setSize(3)
-                .onArrayProperty().setArrayStrategy(ArrayGeneratorStrategy.DEFAULT)
+                .onWrapperProperty().setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT)
+                .onPrimitiveProperty().setGeneratorStrategy(PrimitiveGeneratorStrategy.DEFAULT)
+                .onCollectionProperty().setGeneratorStrategy(buildStrategy).setSize(3)
+                .onArrayProperty().setGeneratorStrategy(ArrayGeneratorStrategy.DEFAULT)
                 .build();
         Queue<Boolean> dequeue = GenerateObject.forType(Queue.class).collectionOf(Types.typeOf(Boolean.class))
-                .onWrapperProperty().setWrapperStrategy(WrapperGeneratorStrategy.DEFAULT)
-                .onPrimitiveProperty().setPrimitiveStrategy(PrimitiveGeneratorStrategy.DEFAULT)
-                .onCollectionProperty().setCollectionStrategy(buildStrategy).setSize(2)
-                .onArrayProperty().setArrayStrategy(ArrayGeneratorStrategy.DEFAULT)
+                .onWrapperProperty().setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT)
+                .onPrimitiveProperty().setGeneratorStrategy(PrimitiveGeneratorStrategy.DEFAULT)
+                .onCollectionProperty().setGeneratorStrategy(buildStrategy).setSize(2)
+                .onArrayProperty().setGeneratorStrategy(ArrayGeneratorStrategy.DEFAULT)
                 .build();
         Collection<Short> collection = GenerateObject.forType(Collection.class).collectionOf(Types.typeOf(Short.class))
-                .onWrapperProperty().setWrapperStrategy(WrapperGeneratorStrategy.DEFAULT)
-                .onPrimitiveProperty().setPrimitiveStrategy(PrimitiveGeneratorStrategy.DEFAULT)
-                .onCollectionProperty().setCollectionStrategy(buildStrategy).setSize(3)
-                .onArrayProperty().setArrayStrategy(ArrayGeneratorStrategy.DEFAULT)
+                .onWrapperProperty().setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT)
+                .onPrimitiveProperty().setGeneratorStrategy(PrimitiveGeneratorStrategy.DEFAULT)
+                .onCollectionProperty().setGeneratorStrategy(buildStrategy).setSize(3)
+                .onArrayProperty().setGeneratorStrategy(ArrayGeneratorStrategy.DEFAULT)
                 .build();
 
         switch (buildStrategy) {
@@ -134,23 +134,23 @@ public class CollectionsTest {
     public void collectionOfCollectionObject(CollectionGeneratorStrategy buildStrategy) {
         List<List<String>> list = GenerateObject.forType(List.class)
                 .collectionOf(Types.typeOf(List.class).of(String.class))
-                .onCollectionProperty().setCollectionStrategy(buildStrategy)
+                .onCollectionProperty().setGeneratorStrategy(buildStrategy)
                 .build();
         Set<Set<Integer>> set = GenerateObject.forType(Set.class)
                 .collectionOf(Types.typeOf(Set.class).of(Integer.class))
-                .onCollectionProperty().setCollectionStrategy(buildStrategy)
+                .onCollectionProperty().setGeneratorStrategy(buildStrategy)
                 .build();
         Queue<Queue<Double>> queue = GenerateObject.forType(Queue.class)
                 .collectionOf(Types.typeOf(Queue.class).of(Double.class))
-                .onCollectionProperty().setCollectionStrategy(buildStrategy)
+                .onCollectionProperty().setGeneratorStrategy(buildStrategy)
                 .build();
         List<Set<Float>> listSet = GenerateObject.forType(List.class)
                 .collectionOf(Types.typeOf(Set.class).of(Float.class))
-                .onCollectionProperty().setCollectionStrategy(buildStrategy)
+                .onCollectionProperty().setGeneratorStrategy(buildStrategy)
                 .build();
         Collection<List<Collection<Boolean>>> collectionOfCollection = GenerateObject.forType(List.class)
                 .collectionOf(Types.typeOf(List.class).of(Collection.class).of(Boolean.class))
-                .onCollectionProperty().setCollectionStrategy(buildStrategy)
+                .onCollectionProperty().setGeneratorStrategy(buildStrategy)
                 .build();
 
         switch (buildStrategy) {

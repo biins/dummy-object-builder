@@ -25,7 +25,7 @@ public class StringObjectBuilder extends AbstractBuilder<String> implements Buil
         return new StringObjectBuilder();
     }
 
-    public StringObjectBuilder setStringStrategy(StringGeneratorStrategy stringStrategy) {
+    public StringObjectBuilder setGeneratorStrategy(StringGeneratorStrategy stringStrategy) {
         this.stringStrategy = stringStrategy;
         return this;
     }

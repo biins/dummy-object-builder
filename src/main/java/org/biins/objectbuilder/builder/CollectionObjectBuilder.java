@@ -18,12 +18,8 @@ import java.util.List;
  * @author Martin Janys
  */
 @SuppressWarnings("unchecked")
-public class CollectionObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
+public class CollectionObjectBuilder<T> extends AbstractCompositeBuilder<T, CollectionObjectBuilder> implements Builder<T> {
 
-    protected CollectionGeneratorStrategy collectionGeneratorStrategy = CollectionGeneratorStrategy.DEFAULT;
-    protected ArrayGeneratorStrategy arrayStrategy = ArrayGeneratorStrategy.DEFAULT;
-    protected PrimitiveGeneratorStrategy primitiveStrategy = PrimitiveGeneratorStrategy.DEFAULT;
-    protected WrapperGeneratorStrategy wrapperStrategy = WrapperGeneratorStrategy.DEFAULT;
     protected int[] size = new int[]{0};
 
     private Types<?> elementType;
@@ -34,33 +30,6 @@ public class CollectionObjectBuilder<T> extends AbstractBuilder<T> implements Bu
 
     static <T> CollectionObjectBuilder<T> forType(Class<T> cls) {
         return new CollectionObjectBuilder<>(cls);
-    }
-
-    public void setCollectionStrategy(CollectionGeneratorStrategy collectionGeneratorStrategy) {
-        this.collectionGeneratorStrategy = collectionGeneratorStrategy;
-    }
-
-    public CollectionObjectBuilder<T> setCollectionStrategy(ArrayGeneratorStrategy arrayStrategy) {
-        this.arrayStrategy = arrayStrategy;
-        return this;
-    }
-
-    public CollectionObjectBuilder<T> setCollectionStrategy(PrimitiveGeneratorStrategy primitiveStrategy) {
-        this.primitiveStrategy = primitiveStrategy;
-        return this;
-    }
-
-    public CollectionObjectBuilder<T> setCollectionStrategy(WrapperGeneratorStrategy wrapperStrategy) {
-        this.wrapperStrategy = wrapperStrategy;
-        return this;
-    }
-
-    public CollectionObjectBuilder<T> setCollectionStrategy(CollectionGeneratorStrategy collectionStrategy, PrimitiveGeneratorStrategy primitiveStrategy, WrapperGeneratorStrategy wrapperStrategy, ArrayGeneratorStrategy arrayStrategy) {
-        setCollectionStrategy(collectionStrategy);
-        setCollectionStrategy(arrayStrategy);
-        setCollectionStrategy(primitiveStrategy);
-        setCollectionStrategy(wrapperStrategy);
-        return this;
     }
 
     public CollectionObjectBuilder<T> setSize(int size) {
@@ -185,8 +154,8 @@ public class CollectionObjectBuilder<T> extends AbstractBuilder<T> implements Bu
 
     private Object objectForType(Class<?> type) {
         return ObjectBuilder.forType(type)
-                .onPrimitiveProperty().setPrimitiveStrategy(primitiveStrategy)
-                .onWrapperProperty().setWrapperStrategy(wrapperStrategy)
+                .onPrimitiveProperty().setGeneratorStrategy(primitiveStrategy)
+                .onWrapperProperty().setGeneratorStrategy(wrapperStrategy)
                 .build();
     }
 

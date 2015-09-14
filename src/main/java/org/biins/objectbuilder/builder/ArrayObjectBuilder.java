@@ -14,11 +14,8 @@ import java.util.Arrays;
  * @author Martin Janys
  */
 @SuppressWarnings("unchecked")
-public class ArrayObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
+public class ArrayObjectBuilder<T> extends AbstractCompositeBuilder<T, ArrayObjectBuilder> implements Builder<T> {
 
-    protected ArrayGeneratorStrategy arrayStrategy = ArrayGeneratorStrategy.DEFAULT;
-    protected PrimitiveGeneratorStrategy primitiveStrategy = PrimitiveGeneratorStrategy.DEFAULT;
-    protected WrapperGeneratorStrategy wrapperStrategy = WrapperGeneratorStrategy.DEFAULT;
     protected int[] size = new int[]{0};
 
     protected ArrayObjectBuilder(Class<T> cls) {
@@ -27,28 +24,6 @@ public class ArrayObjectBuilder<T> extends AbstractBuilder<T> implements Builder
 
     static <T> ArrayObjectBuilder<T> forType(Class<T> cls) {
         return new ArrayObjectBuilder<T>(cls);
-    }
-
-    public ArrayObjectBuilder<T> setArrayStrategy(ArrayGeneratorStrategy arrayStrategy) {
-        this.arrayStrategy = arrayStrategy;
-        return this;
-    }
-
-    public ArrayObjectBuilder<T> setArrayStrategy(PrimitiveGeneratorStrategy primitiveStrategy) {
-        this.primitiveStrategy = primitiveStrategy;
-        return this;
-    }
-
-    public ArrayObjectBuilder<T> setArrayStrategy(WrapperGeneratorStrategy wrapperStrategy) {
-        this.wrapperStrategy = wrapperStrategy;
-        return this;
-    }
-
-    public ArrayObjectBuilder<T> setArrayStrategy(ArrayGeneratorStrategy arrayStrategy, PrimitiveGeneratorStrategy primitiveStrategy, WrapperGeneratorStrategy wrapperStrategy) {
-        setArrayStrategy(arrayStrategy);
-        setArrayStrategy(primitiveStrategy);
-        setArrayStrategy(wrapperStrategy);
-        return this;
     }
 
     public ArrayObjectBuilder<T> setSize(int size) {
@@ -155,8 +130,8 @@ public class ArrayObjectBuilder<T> extends AbstractBuilder<T> implements Builder
 
     private Object objectForType(Class<?> type) {
         return ObjectBuilder.forType(type)
-                .onPrimitiveProperty().setPrimitiveStrategy(primitiveStrategy)
-                .onWrapperProperty().setWrapperStrategy(wrapperStrategy)
+                .onPrimitiveProperty().setGeneratorStrategy(primitiveStrategy)
+                .onWrapperProperty().setGeneratorStrategy(wrapperStrategy)
                 .build();
     }
 

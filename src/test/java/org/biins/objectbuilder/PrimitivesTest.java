@@ -25,28 +25,28 @@ public class PrimitivesTest {
     @Test(dataProvider = "buildStrategy")
     public void primitiveObject(PrimitiveGeneratorStrategy buildStrategy) {
         byte b = GenerateObject.forType(byte.class)
-                .onPrimitiveProperty().setPrimitiveStrategy(buildStrategy)
+                .onPrimitiveProperty().setGeneratorStrategy(buildStrategy)
                 .build();
         short s = GenerateObject.forType(short.class)
-                .onPrimitiveProperty().setPrimitiveStrategy(buildStrategy)
+                .onPrimitiveProperty().setGeneratorStrategy(buildStrategy)
                 .build();
         int i = GenerateObject.forType(int.class)
-                .onPrimitiveProperty().setPrimitiveStrategy(buildStrategy)
+                .onPrimitiveProperty().setGeneratorStrategy(buildStrategy)
                 .build();
         long l = GenerateObject.forType(long.class)
-                .onPrimitiveProperty().setPrimitiveStrategy(buildStrategy)
+                .onPrimitiveProperty().setGeneratorStrategy(buildStrategy)
                 .build();
         float f = GenerateObject.forType(float.class)
-                .onPrimitiveProperty().setPrimitiveStrategy(buildStrategy)
+                .onPrimitiveProperty().setGeneratorStrategy(buildStrategy)
                 .build();
         double d = GenerateObject.forType(double.class)
-                .onPrimitiveProperty().setPrimitiveStrategy(buildStrategy)
+                .onPrimitiveProperty().setGeneratorStrategy(buildStrategy)
                 .build();
         char c = GenerateObject.forType(char.class)
-                .onPrimitiveProperty().setPrimitiveStrategy(buildStrategy)
+                .onPrimitiveProperty().setGeneratorStrategy(buildStrategy)
                 .build();
         boolean bool = GenerateObject.forType(boolean.class)
-                .onPrimitiveProperty().setPrimitiveStrategy(buildStrategy)
+                .onPrimitiveProperty().setGeneratorStrategy(buildStrategy)
                 .build();
 
         switch (buildStrategy) {

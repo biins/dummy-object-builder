@@ -28,26 +28,26 @@ public class StringsTest {
     @Test(dataProvider = "buildStrategy")
     public void string(StringGeneratorStrategy buildStrategy) {
         String def = GenerateObject.forType(String.class)
-                .onWrapperProperty().setWrapperStrategy(WrapperGeneratorStrategy.DEFAULT)
-                .onStringProperty().setStringStrategy(buildStrategy)
+                .onWrapperProperty().setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT)
+                .onStringProperty().setGeneratorStrategy(buildStrategy)
                 .build();
         String size5 = GenerateObject.forType(String.class)
-                .onStringProperty().setStringStrategy(buildStrategy).setSize(5)
-                .onWrapperProperty().setWrapperStrategy(WrapperGeneratorStrategy.DEFAULT)
+                .onStringProperty().setGeneratorStrategy(buildStrategy).setSize(5)
+                .onWrapperProperty().setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT)
                 .build();
         String numeric = GenerateObject.forType(String.class)
-                .onStringProperty().setStringStrategy(buildStrategy).setNumeric(true)
+                .onStringProperty().setGeneratorStrategy(buildStrategy).setNumeric(true)
                 .build();
         String alpha = GenerateObject.forType(String.class)
-                .onStringProperty().setStringStrategy(buildStrategy).setAlpha(true)
+                .onStringProperty().setGeneratorStrategy(buildStrategy).setAlpha(true)
                 .build();
         String alphaLower = GenerateObject.forType(String.class)
-                .onStringProperty().setStringStrategy(buildStrategy).setAttributes(true, true, false)
-                .onWrapperProperty().setWrapperStrategy(WrapperGeneratorStrategy.DEFAULT)
+                .onStringProperty().setGeneratorStrategy(buildStrategy).setAttributes(true, true, false)
+                .onWrapperProperty().setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT)
                 .build();
         String alphaNumericLower = GenerateObject.forType(String.class)
-                .onStringProperty().setStringStrategy(buildStrategy).setLower(true)
-                .onWrapperProperty().setWrapperStrategy(WrapperGeneratorStrategy.DEFAULT)
+                .onStringProperty().setGeneratorStrategy(buildStrategy).setLower(true)
+                .onWrapperProperty().setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT)
                 .build();
 
         switch (buildStrategy) {

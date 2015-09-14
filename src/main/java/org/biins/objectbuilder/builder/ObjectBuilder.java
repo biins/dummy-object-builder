@@ -11,6 +11,7 @@ import java.util.List;
 /**
  * @author Martin Janys
  */
+@SuppressWarnings("unused")
 public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
 
     private final PrimitiveObjectBuilder primitiveObjectBuilder;
@@ -38,35 +39,35 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
         return primitiveObjectBuilder;
     }
     public PrimitiveObjectBuilder onPrimitiveProperty(PrimitiveGeneratorStrategy strategy) {
-        return onPrimitiveProperty().setPrimitiveStrategy(strategy);
+        return onPrimitiveProperty().setGeneratorStrategy(strategy);
     }
 
     public WrapperObjectBuilder onWrapperProperty() {
         return wrapperObjectBuilder;
     }
     public WrapperObjectBuilder onWrapperProperty(WrapperGeneratorStrategy strategy) {
-        return onWrapperProperty().setWrapperStrategy(strategy);
+        return onWrapperProperty().setGeneratorStrategy(strategy);
     }
 
     public ArrayObjectBuilder onArrayProperty() {
         return arrayObjectBuilder;
     }
     public ArrayObjectBuilder onArrayProperty(ArrayGeneratorStrategy strategy) {
-        return onArrayProperty().setArrayStrategy(strategy);
+        return onArrayProperty().setGeneratorStrategy(strategy);
     }
 
     public StringObjectBuilder onStringProperty() {
         return stringObjectBuilder;
     }
     public StringObjectBuilder onStringProperty(StringGeneratorStrategy strategy) {
-        return onStringProperty().setStringStrategy(strategy);
+        return onStringProperty().setGeneratorStrategy(strategy);
     }
 
     public CollectionObjectBuilder onCollectionProperty() {
         return collectionObjectBuilder;
     }
     public CollectionObjectBuilder onCollectionProperty(CollectionGeneratorStrategy strategy) {
-        return onCollectionProperty().setCollectionStrategy(strategy);
+        return onCollectionProperty().setGeneratorStrategy(strategy);
     }
 
     public T build() {
@@ -114,35 +115,35 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
             return ObjectBuilder.this.primitiveObjectBuilder;
         }
         public PrimitiveObjectBuilder onPrimitiveProperty(PrimitiveGeneratorStrategy strategy) {
-            return onPrimitiveProperty().setPrimitiveStrategy(strategy);
+            return onPrimitiveProperty().setGeneratorStrategy(strategy);
         }
 
         public WrapperObjectBuilder onWrapperProperty() {
             return ObjectBuilder.this.wrapperObjectBuilder;
         }
         public WrapperObjectBuilder onWrapperProperty(WrapperGeneratorStrategy strategy) {
-            return onWrapperProperty().setWrapperStrategy(strategy);
+            return onWrapperProperty().setGeneratorStrategy(strategy);
         }
 
         public ArrayObjectBuilder onArrayProperty() {
             return ObjectBuilder.this.arrayObjectBuilder;
         }
         public ArrayObjectBuilder onArrayProperty(ArrayGeneratorStrategy strategy) {
-            return onArrayProperty().setArrayStrategy(strategy);
+            return onArrayProperty().setGeneratorStrategy(strategy);
         }
 
         public StringObjectBuilder onStringProperty() {
             return ObjectBuilder.this.stringObjectBuilder;
         }
         public StringObjectBuilder onStringProperty(StringGeneratorStrategy strategy) {
-            return onStringProperty().setStringStrategy(strategy);
+            return onStringProperty().setGeneratorStrategy(strategy);
         }
 
         public CollectionObjectBuilder onCollectionProperty() {
             return ObjectBuilder.this.collectionObjectBuilder;
         }
         public CollectionObjectBuilder onCollectionProperty(CollectionGeneratorStrategy strategy) {
-            return onCollectionProperty().setCollectionStrategy(strategy);
+            return onCollectionProperty().setGeneratorStrategy(strategy);
         }
     }
 
@@ -158,7 +159,7 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
             return ObjectBuilder.this.build();
         }
 
-        public PrimitiveObjectBuilder setPrimitiveStrategy(PrimitiveGeneratorStrategy strategy) {
+        public PrimitiveObjectBuilder setGeneratorStrategy(PrimitiveGeneratorStrategy strategy) {
             builder.setPrimitiveStrategy(strategy);
             return this;
         }
@@ -181,7 +182,7 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
             return ObjectBuilder.this.build();
         }
 
-        public WrapperObjectBuilder setWrapperStrategy(WrapperGeneratorStrategy strategy) {
+        public WrapperObjectBuilder setGeneratorStrategy(WrapperGeneratorStrategy strategy) {
             builder.setWrapperStrategy(strategy);
             return this;
         }
@@ -214,23 +215,18 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
             return this;
         }
 
-        public ArrayObjectBuilder setArrayStrategy(ArrayGeneratorStrategy strategy) {
-            builder.setArrayStrategy(strategy);
+        public ArrayObjectBuilder setGeneratorStrategy(ArrayGeneratorStrategy strategy) {
+            builder.setGeneratorStrategy(strategy);
             return this;
         }
 
-        public ArrayObjectBuilder setArrayStrategy(PrimitiveGeneratorStrategy strategy) {
-            builder.setArrayStrategy(strategy);
+        public ArrayObjectBuilder setGeneratorStrategy(PrimitiveGeneratorStrategy strategy) {
+            builder.setGeneratorStrategy(strategy);
             return this;
         }
 
-        public ArrayObjectBuilder setArrayStrategy(WrapperGeneratorStrategy strategy) {
-            builder.setArrayStrategy(strategy);
-            return this;
-        }
-
-        public ArrayObjectBuilder setArrayStrategy(ArrayGeneratorStrategy arrayStrategy, PrimitiveGeneratorStrategy primitiveStrategy, WrapperGeneratorStrategy wrapperStrategy) {
-            builder.setArrayStrategy(arrayStrategy, primitiveStrategy, wrapperStrategy);
+        public ArrayObjectBuilder setGeneratorStrategy(WrapperGeneratorStrategy strategy) {
+            builder.setGeneratorStrategy(strategy);
             return this;
         }
 
@@ -267,23 +263,18 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
             return this;
         }
 
-        public CollectionObjectBuilder setCollectionStrategy(CollectionGeneratorStrategy strategy) {
-            builder.setCollectionStrategy(strategy);
+        public CollectionObjectBuilder setGeneratorStrategy(CollectionGeneratorStrategy strategy) {
+            builder.setGeneratorStrategy(strategy);
             return this;
         }
 
-        public CollectionObjectBuilder setCollectionStrategy(PrimitiveGeneratorStrategy strategy) {
-            builder.setCollectionStrategy(strategy);
+        public CollectionObjectBuilder setGeneratorStrategy(PrimitiveGeneratorStrategy strategy) {
+            builder.setGeneratorStrategy(strategy);
             return this;
         }
 
-        public CollectionObjectBuilder setCollectionStrategy(WrapperGeneratorStrategy strategy) {
-            builder.setCollectionStrategy(strategy);
-            return this;
-        }
-
-        public CollectionObjectBuilder setCollectionStrategy(CollectionGeneratorStrategy collectionStrategy, PrimitiveGeneratorStrategy primitiveStrategy, WrapperGeneratorStrategy wrapperStrategy, ArrayGeneratorStrategy arrayStrategy) {
-            builder.setCollectionStrategy(collectionStrategy, primitiveStrategy, wrapperStrategy, arrayStrategy);
+        public CollectionObjectBuilder setGeneratorStrategy(WrapperGeneratorStrategy strategy) {
+            builder.setGeneratorStrategy(strategy);
             return this;
         }
 
@@ -310,9 +301,8 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
             return this;
         }
 
-
-        public StringObjectBuilder setStringStrategy(StringGeneratorStrategy strategy) {
-            builder.setStringStrategy(strategy);
+        public StringObjectBuilder setGeneratorStrategy(StringGeneratorStrategy strategy) {
+            builder.setGeneratorStrategy(strategy);
             return this;
         }
 
@@ -336,6 +326,7 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
             return this;
         }
 
+        @SuppressWarnings("unchecked")
         public T buildString() {
             return (T) builder.buildString();
         }
