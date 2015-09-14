@@ -43,19 +43,6 @@ public class ArrayObjectBuilder<T> extends AbstractCompositeBuilder<T, ArrayObje
     }
 
     @Override
-    protected Object createCompositeObject(Class<?> type) {
-        return ObjectBuilder.forType(type)
-                .onArrayProperty()
-                    .setGeneratorStrategy(primitiveStrategy)
-                    .setGeneratorStrategy(wrapperStrategy)
-                    .setGeneratorStrategy(stringGeneratorStrategy)
-                    .setGeneratorStrategy(collectionGeneratorStrategy)
-                    .setGeneratorStrategy(arrayStrategy)
-                    .setSize(decreaseDimension(size))
-                .build();
-    }
-
-    @Override
     public T build() {
         return buildArray();
     }
@@ -87,10 +74,10 @@ public class ArrayObjectBuilder<T> extends AbstractCompositeBuilder<T, ArrayObje
         return (T) array;
     }
 
-    private Object fillArray(Object array, Class<?> componentType, int... sizes) {
+    private Object fillArray(Object array, Class<?> componentType, int ... sizes) {
         int maxIndex = countSize(sizes);
         for (int i = 0; i < maxIndex; i++) {
-            Object value = createObject(componentType);
+            Object value = createObject(componentType, sizes);
             Array.set(array, i, value);
         }
 
@@ -99,10 +86,6 @@ public class ArrayObjectBuilder<T> extends AbstractCompositeBuilder<T, ArrayObje
 
     private int countSize(int[] sizes) {
         return sizes.length > 0 ? sizes[0] : 0;
-    }
-
-    private int[] decreaseDimension(int[] size) {
-        return size.length > 1 ? Arrays.copyOfRange(size, 1, size.length) : new int[]{0};
     }
 
     private Object createArray(Class<?> type, int size) {

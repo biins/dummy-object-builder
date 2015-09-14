@@ -80,78 +80,44 @@ public class CollectionObjectBuilder<T> extends AbstractCompositeBuilder<T, Coll
     }
 
     private T buildCollectionInternal(CollectionType<T> collectionType, Types elementType, int ... sizes) {
-        int collectionSize = countSize(sizes, 0);
-        int subCollectionSize = countSize(sizes, 1);
+        return buildCollectionInternal(collectionType.getType(), elementType, sizes);
+    }
 
-        Collection collection;
-
-        if (ClassUtils.isCollection(elementType.getType())) {
-            // element is collection
-            ArrayList list = new ArrayList(collectionSize);
-            for (int i = 0; i < collectionSize; i++) {
-                Collection subCollection;
-                if (elementType.next() != null && ClassUtils.isCollection(elementType.next().getType())) {
-                    subCollection = createCollectionWithCollections(elementType, elementType.next(), decreaseDimension(sizes));
-                }
-                else {
-                    subCollection = createCollectionWithValues(elementType.getType(), elementType.next(), subCollectionSize);
-                }
-
-                list.add(i, subCollection);
-            }
-            collection = createCollection(collectionType.getType(), list);
-        }
-        else {
-            // element is value
-            if (elementType.next() != null && ClassUtils.isCollection(elementType.next().getType())) {
-                collection = createCollectionWithCollections(elementType, elementType.next(), decreaseDimension(sizes));
-            }
-            else {
-                collection = createCollectionWithValues(collectionType.getType(), elementType, collectionSize);
-            }
-        }
-
+    private T buildCollectionInternal(Class<T> collectionType, Types elementType, int ... sizes) {
+        Collection collection = createCollection(collectionType, elementType, sizes);
         return (T) collection;
     }
 
-    private int countSize(int[] sizes, int index) {
-        return sizes.length > index
-                ? sizes[index]
-                : (collectionGeneratorStrategy.equals(CollectionGeneratorStrategy.SINGLETON)
-                    ? 1
-                    : 0);
-    }
-
-    private Collection createCollectionWithValues(Class<?> collectionType, Types<?> elementType, int maxIndex) {
-        List list = new ArrayList(maxIndex);
-        for (int i = 0; i < maxIndex; i++) {
-            Object value =  createObject(elementType.getType());
-            list.add(i, value);
-        }
-        return createCollection(collectionType, list);
-    }
-
-    private Collection createCollectionWithCollections(Types<?> collectionType, Types<?> elementType, int... sizes) {
-        List list = new ArrayList();
-        int maxIndex = countSize(sizes, 0);
-
-        for (int i = 0; i < maxIndex; i++) {
-            Object value;
-            if (elementType != null && ClassUtils.isCollection(elementType.getType())) {
-                value = buildCollection(new CollectionType(elementType.getType()), elementType.next(), decreaseDimension(sizes));
-            }
-            else {
-                value = createCompositeObject(elementType.getType());
-            }
+    private Collection createCollection(Class<?> collectionType, Types elementType, int[] sizes) {
+        int size = countSize(sizes);
+        List list = new ArrayList(size);
+        for (int i = 0; i < size; i++) {
+            Object value = createObject(elementType, sizes);
             list.add(i, value);
         }
 
-        return createCollection(collectionType.getType(), list);
+        return createCollectionOfType(collectionType, list);
     }
 
-    @Override
-    protected Object createCompositeObject(Class<?> type) {
+
+    protected Object createObject(Types type, int ... size) {
+        if (ClassUtils.isComposite(type.getType())) {
+            return createCompositeObject(type.getType(), type.next(), size);
+        }
+        else {
+            return createRawObject(type.getType());
+        }
+    }
+
+    protected Object createCompositeObject(Class<?> type, Types of, int ... size) {
         return ObjectBuilder.forType(type)
+                .onArrayProperty()
+                    .setGeneratorStrategy(primitiveStrategy)
+                    .setGeneratorStrategy(wrapperStrategy)
+                    .setGeneratorStrategy(stringGeneratorStrategy)
+                    .setGeneratorStrategy(collectionGeneratorStrategy)
+                    .setGeneratorStrategy(arrayStrategy)
+                    .setSize(decreaseDimension(size))
                 .onCollectionProperty()
                     .setGeneratorStrategy(primitiveStrategy)
                     .setGeneratorStrategy(wrapperStrategy)
@@ -159,14 +125,23 @@ public class CollectionObjectBuilder<T> extends AbstractCompositeBuilder<T, Coll
                     .setGeneratorStrategy(collectionGeneratorStrategy)
                     .setGeneratorStrategy(arrayStrategy)
                     .setSize(decreaseDimension(size))
+                .and().collectionOf(of)
                 .build();
     }
 
-    private int[] decreaseDimension(int[] size) {
+    private int countSize(int[] sizes) {
+        return sizes.length > 0
+                ? sizes[0]
+                : (collectionGeneratorStrategy.equals(CollectionGeneratorStrategy.SINGLETON)
+                    ? 1
+                    : 0);
+    }
+
+    protected int[] decreaseDimension(int[] size) {
         return size.length > 1 ? Arrays.copyOfRange(size, 1, size.length) : new int[]{collectionGeneratorStrategy.equals(CollectionGeneratorStrategy.SINGLETON) ? 1 : 0};
     }
 
-    private Collection createCollection(Class<?> collectionType, List values) {
+    private Collection createCollectionOfType(Class<?> collectionType, List values) {
         Class<? extends Collection> collectionCls = CollectionTypeRegistry.getDefaultImpl((Class<? extends Collection>) collectionType);
         return CollectionTypeRegistry.getNewCollection(collectionCls, values);
     }

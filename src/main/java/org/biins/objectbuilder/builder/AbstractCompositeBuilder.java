@@ -3,6 +3,8 @@ package org.biins.objectbuilder.builder;
 import org.biins.objectbuilder.builder.strategy.*;
 import org.biins.objectbuilder.util.ClassUtils;
 
+import java.util.Arrays;
+
 /**
  * @author Martin Janys
  */
@@ -44,11 +46,32 @@ public abstract class AbstractCompositeBuilder<T, BUILDER> extends AbstractBuild
         return (BUILDER) this;
     }
 
-    protected abstract Object createCompositeObject(Class<?> type);
+    protected Object createCompositeObject(Class<?> type, int ... size) {
+        return ObjectBuilder.forType(type)
+                .onArrayProperty()
+                    .setGeneratorStrategy(primitiveStrategy)
+                    .setGeneratorStrategy(wrapperStrategy)
+                    .setGeneratorStrategy(stringGeneratorStrategy)
+                    .setGeneratorStrategy(collectionGeneratorStrategy)
+                    .setGeneratorStrategy(arrayStrategy)
+                .setSize(decreaseDimension(size))
+                .onCollectionProperty()
+                    .setGeneratorStrategy(primitiveStrategy)
+                    .setGeneratorStrategy(wrapperStrategy)
+                    .setGeneratorStrategy(stringGeneratorStrategy)
+                    .setGeneratorStrategy(collectionGeneratorStrategy)
+                    .setGeneratorStrategy(arrayStrategy)
+                    .setSize(decreaseDimension(size))
+                .build();
+    }
 
-    protected Object createObject(Class<?> type) {
+    protected int[] decreaseDimension(int[] size) {
+        return size.length > 1 ? Arrays.copyOfRange(size, 1, size.length) : new int[]{0};
+    }
+
+    protected Object createObject(Class<?> type, int ... size) {
         if (ClassUtils.isComposite(type)) {
-            return createCompositeObject(type);
+            return createCompositeObject(type, size);
         }
         else {
             return createRawObject(type);
