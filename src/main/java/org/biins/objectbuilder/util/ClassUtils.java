@@ -28,4 +28,8 @@ public class ClassUtils {
     public static <T> boolean isCollection(Class<T> cls) {
         return Collection.class.isAssignableFrom(cls);
     }
+
+    public static boolean isComposite(Class<?> cls) {
+        return isArray(cls) || isCollection(cls);
+    }
 }

@@ -1,9 +1,6 @@
 package org.biins.objectbuilder.builder;
 
-import org.biins.objectbuilder.builder.strategy.ArrayGeneratorStrategy;
 import org.biins.objectbuilder.builder.strategy.CollectionGeneratorStrategy;
-import org.biins.objectbuilder.builder.strategy.PrimitiveGeneratorStrategy;
-import org.biins.objectbuilder.builder.strategy.WrapperGeneratorStrategy;
 import org.biins.objectbuilder.types.Types;
 import org.biins.objectbuilder.types.collection.CollectionType;
 import org.biins.objectbuilder.types.collection.CollectionTypeRegistry;
@@ -128,7 +125,7 @@ public class CollectionObjectBuilder<T> extends AbstractCompositeBuilder<T, Coll
     private Collection createCollectionWithValues(Class<?> collectionType, Types<?> elementType, int maxIndex) {
         List list = new ArrayList(maxIndex);
         for (int i = 0; i < maxIndex; i++) {
-            Object value =  objectForType(elementType.getType());
+            Object value =  createObject(elementType.getType());
             list.add(i, value);
         }
         return createCollection(collectionType, list);
@@ -144,7 +141,7 @@ public class CollectionObjectBuilder<T> extends AbstractCompositeBuilder<T, Coll
                 value = buildCollection(new CollectionType(elementType.getType()), elementType.next(), decreaseDimension(sizes));
             }
             else {
-                value = objectForType(elementType.getType());
+                value = createCompositeObject(elementType.getType());
             }
             list.add(i, value);
         }
@@ -152,10 +149,16 @@ public class CollectionObjectBuilder<T> extends AbstractCompositeBuilder<T, Coll
         return createCollection(collectionType.getType(), list);
     }
 
-    private Object objectForType(Class<?> type) {
+    @Override
+    protected Object createCompositeObject(Class<?> type) {
         return ObjectBuilder.forType(type)
-                .onPrimitiveProperty().setGeneratorStrategy(primitiveStrategy)
-                .onWrapperProperty().setGeneratorStrategy(wrapperStrategy)
+                .onCollectionProperty()
+                    .setGeneratorStrategy(primitiveStrategy)
+                    .setGeneratorStrategy(wrapperStrategy)
+                    .setGeneratorStrategy(stringGeneratorStrategy)
+                    .setGeneratorStrategy(collectionGeneratorStrategy)
+                    .setGeneratorStrategy(arrayStrategy)
+                    .setSize(decreaseDimension(size))
                 .build();
     }
 

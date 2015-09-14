@@ -147,7 +147,44 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
         }
     }
 
-    public class PrimitiveObjectBuilder extends AbstractTransitionsBuilder {
+
+    @SuppressWarnings("unchecked")
+    private abstract class AbstractCompositeTransitionsBuilder<TYPE extends AbstractCompositeBuilder, BUILDER> extends AbstractTransitionsBuilder {
+
+        protected TYPE builder;
+
+        public AbstractCompositeTransitionsBuilder(TYPE builder) {
+            this.builder = builder;
+        }
+
+        public BUILDER setGeneratorStrategy(PrimitiveGeneratorStrategy strategy) {
+            builder.setGeneratorStrategy(strategy);
+            return (BUILDER) this;
+        }
+
+        public BUILDER setGeneratorStrategy(WrapperGeneratorStrategy strategy) {
+            builder.setGeneratorStrategy(strategy);
+            return (BUILDER) this;
+        }
+
+        public BUILDER setGeneratorStrategy(StringGeneratorStrategy strategy) {
+            builder.setGeneratorStrategy(strategy);
+            return (BUILDER) this;
+        }
+
+        public BUILDER setGeneratorStrategy(CollectionGeneratorStrategy strategy) {
+            builder.setGeneratorStrategy(strategy);
+            return (BUILDER) this;
+        }
+
+        public BUILDER setGeneratorStrategy(ArrayGeneratorStrategy strategy) {
+            builder.setGeneratorStrategy(strategy);
+            return (BUILDER) this;
+        }
+    }
+
+
+        public class PrimitiveObjectBuilder extends AbstractTransitionsBuilder {
 
         private final org.biins.objectbuilder.builder.PrimitiveObjectBuilder<T> builder;
 
@@ -192,12 +229,10 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
         }
     }
 
-    public class ArrayObjectBuilder extends AbstractTransitionsBuilder {
-
-        private final org.biins.objectbuilder.builder.ArrayObjectBuilder<T> builder;
+    public class ArrayObjectBuilder extends AbstractCompositeTransitionsBuilder<org.biins.objectbuilder.builder.ArrayObjectBuilder, ArrayObjectBuilder> {
 
         protected ArrayObjectBuilder() {
-            builder = org.biins.objectbuilder.builder.ArrayObjectBuilder.forType(cls);
+            super(org.biins.objectbuilder.builder.ArrayObjectBuilder.forType(cls));
         }
 
         @Override
@@ -215,32 +250,16 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
             return this;
         }
 
-        public ArrayObjectBuilder setGeneratorStrategy(ArrayGeneratorStrategy strategy) {
-            builder.setGeneratorStrategy(strategy);
-            return this;
-        }
-
-        public ArrayObjectBuilder setGeneratorStrategy(PrimitiveGeneratorStrategy strategy) {
-            builder.setGeneratorStrategy(strategy);
-            return this;
-        }
-
-        public ArrayObjectBuilder setGeneratorStrategy(WrapperGeneratorStrategy strategy) {
-            builder.setGeneratorStrategy(strategy);
-            return this;
-        }
-
+        @SuppressWarnings("unchecked")
         public T buildArray() {
-            return builder.buildArray();
+            return (T) builder.buildArray();
         }
     }
 
-    public class CollectionObjectBuilder extends AbstractTransitionsBuilder {
-
-        private final org.biins.objectbuilder.builder.CollectionObjectBuilder<T> builder;
+    public class CollectionObjectBuilder extends AbstractCompositeTransitionsBuilder<org.biins.objectbuilder.builder.CollectionObjectBuilder, CollectionObjectBuilder> {
 
         protected CollectionObjectBuilder() {
-            builder = org.biins.objectbuilder.builder.CollectionObjectBuilder.forType(cls);
+            super(org.biins.objectbuilder.builder.CollectionObjectBuilder.forType(cls));
         }
 
         private CollectionObjectBuilder of(Types<?> types) {
@@ -263,23 +282,9 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
             return this;
         }
 
-        public CollectionObjectBuilder setGeneratorStrategy(CollectionGeneratorStrategy strategy) {
-            builder.setGeneratorStrategy(strategy);
-            return this;
-        }
-
-        public CollectionObjectBuilder setGeneratorStrategy(PrimitiveGeneratorStrategy strategy) {
-            builder.setGeneratorStrategy(strategy);
-            return this;
-        }
-
-        public CollectionObjectBuilder setGeneratorStrategy(WrapperGeneratorStrategy strategy) {
-            builder.setGeneratorStrategy(strategy);
-            return this;
-        }
-
+        @SuppressWarnings("unchecked")
         public T buildCollection() {
-            return builder.buildCollection();
+            return (T) builder.buildCollection();
         }
     }
 

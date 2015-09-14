@@ -1,11 +1,7 @@
 package org.biins.objectbuilder.builder;
 
-import org.biins.objectbuilder.builder.strategy.ArrayGeneratorStrategy;
-import org.biins.objectbuilder.builder.strategy.PrimitiveGeneratorStrategy;
-import org.biins.objectbuilder.builder.strategy.WrapperGeneratorStrategy;
 import org.biins.objectbuilder.types.array.ArrayType;
 import org.biins.objectbuilder.types.array.ArrayTypeRegistry;
-import org.biins.objectbuilder.util.ClassUtils;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -47,6 +43,19 @@ public class ArrayObjectBuilder<T> extends AbstractCompositeBuilder<T, ArrayObje
     }
 
     @Override
+    protected Object createCompositeObject(Class<?> type) {
+        return ObjectBuilder.forType(type)
+                .onArrayProperty()
+                    .setGeneratorStrategy(primitiveStrategy)
+                    .setGeneratorStrategy(wrapperStrategy)
+                    .setGeneratorStrategy(stringGeneratorStrategy)
+                    .setGeneratorStrategy(collectionGeneratorStrategy)
+                    .setGeneratorStrategy(arrayStrategy)
+                    .setSize(decreaseDimension(size))
+                .build();
+    }
+
+    @Override
     public T build() {
         return buildArray();
     }
@@ -69,70 +78,27 @@ public class ArrayObjectBuilder<T> extends AbstractCompositeBuilder<T, ArrayObje
     }
 
     private T buildArrayInternal(ArrayType<T> arrayType, int ... sizes) {
-        int arraySize = sizes.length > 0 ? sizes[0] : 0;
-        int subArraySize = sizes.length > 1 ? sizes[1] : 0;
+        int arraySize = countSize(sizes);
 
         Class<?> componentType = arrayType.getComponentType();
         Object array = createArray(componentType, arraySize);
-
-        if (ClassUtils.isArray(componentType)) {
-            for (int i = 0; i < arraySize; i++) {
-                Object subArray = createArray(componentType.getComponentType(), subArraySize);
-                if (ClassUtils.isArray(componentType)) {
-                    subArray = fillArrayWithArray(subArray, decreaseDimension(sizes));
-                }
-                else {
-                    subArray = fillArrayWithValues(subArray, componentType, subArraySize);
-                }
-
-                Array.set(array, i, subArray);
-            }
-        }
-        else {
-            if (ClassUtils.isArray(arrayType.getComponentType())) {
-                // todo: unused ?
-                array = fillArrayWithArray(array, decreaseDimension(sizes));
-            }
-            else {
-                array = fillArrayWithValues(array, arrayType.getComponentType(), arraySize);
-            }
-        }
+        array = fillArray(array, componentType, sizes);
 
         return (T) array;
     }
 
-    private Object fillArrayWithValues(Object array, Class<?> componentType, int index) {
-        for (int i = 0; i < index; i++) {
-            Object value =  objectForType(componentType);
-            Array.set(array, i, value);
-        }
-
-        return array;
-
-    }
-
-    private Object fillArrayWithArray(Object array, int ... sizes) {
-        int maxIndex = sizes.length > 0 ? sizes[0] : 0;
+    private Object fillArray(Object array, Class<?> componentType, int... sizes) {
+        int maxIndex = countSize(sizes);
         for (int i = 0; i < maxIndex; i++) {
-            Class<?> componentType = array.getClass().getComponentType();
-            Object value;
-            if (ClassUtils.isArray(componentType)) {
-                value = buildArray(new ArrayType(componentType), decreaseDimension(sizes));
-            }
-            else {
-                value = objectForType(componentType);
-            }
+            Object value = createObject(componentType);
             Array.set(array, i, value);
         }
 
         return array;
     }
 
-    private Object objectForType(Class<?> type) {
-        return ObjectBuilder.forType(type)
-                .onPrimitiveProperty().setGeneratorStrategy(primitiveStrategy)
-                .onWrapperProperty().setGeneratorStrategy(wrapperStrategy)
-                .build();
+    private int countSize(int[] sizes) {
+        return sizes.length > 0 ? sizes[0] : 0;
     }
 
     private int[] decreaseDimension(int[] size) {
