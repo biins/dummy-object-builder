@@ -34,21 +34,36 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
     public PrimitiveObjectBuilder onPrimitiveProperty() {
         return primitiveObjectBuilder;
     }
+    public PrimitiveObjectBuilder onPrimitiveProperty(PrimitiveGeneratorStrategy strategy) {
+        return onPrimitiveProperty().setPrimitiveStrategy(strategy);
+    }
 
     public WrapperObjectBuilder onWrapperProperty() {
         return wrapperObjectBuilder;
+    }
+    public WrapperObjectBuilder onWrapperProperty(WrapperGeneratorStrategy strategy) {
+        return onWrapperProperty().setWrapperStrategy(strategy);
     }
 
     public ArrayObjectBuilder onArrayProperty() {
         return arrayObjectBuilder;
     }
+    public ArrayObjectBuilder onArrayProperty(ArrayGeneratorStrategy strategy) {
+        return onArrayProperty().setArrayStrategy(strategy);
+    }
 
     public StringObjectBuilder onStringProperty() {
         return stringObjectBuilder;
     }
+    public StringObjectBuilder onStringProperty(StringGeneratorStrategy strategy) {
+        return onStringProperty().setStringStrategy(strategy);
+    }
 
     public CollectionObjectBuilder onCollectionProperty() {
         return collectionObjectBuilder;
+    }
+    public CollectionObjectBuilder onCollectionProperty(CollectionGeneratorStrategy strategy) {
+        return onCollectionProperty().setCollectionStrategy(strategy);
     }
 
     public T build() {
@@ -86,21 +101,36 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
         public PrimitiveObjectBuilder onPrimitiveProperty() {
             return ObjectBuilder.this.primitiveObjectBuilder;
         }
+        public PrimitiveObjectBuilder onPrimitiveProperty(PrimitiveGeneratorStrategy strategy) {
+            return onPrimitiveProperty().setPrimitiveStrategy(strategy);
+        }
 
         public WrapperObjectBuilder onWrapperProperty() {
             return ObjectBuilder.this.wrapperObjectBuilder;
+        }
+        public WrapperObjectBuilder onWrapperProperty(WrapperGeneratorStrategy strategy) {
+            return onWrapperProperty().setWrapperStrategy(strategy);
         }
 
         public ArrayObjectBuilder onArrayProperty() {
             return ObjectBuilder.this.arrayObjectBuilder;
         }
+        public ArrayObjectBuilder onArrayProperty(ArrayGeneratorStrategy strategy) {
+            return onArrayProperty().setArrayStrategy(strategy);
+        }
 
         public StringObjectBuilder onStringProperty() {
             return ObjectBuilder.this.stringObjectBuilder;
         }
+        public StringObjectBuilder onStringProperty(StringGeneratorStrategy strategy) {
+            return onStringProperty().setStringStrategy(strategy);
+        }
 
         public CollectionObjectBuilder onCollectionProperty() {
             return ObjectBuilder.this.collectionObjectBuilder;
+        }
+        public CollectionObjectBuilder onCollectionProperty(CollectionGeneratorStrategy strategy) {
+            return onCollectionProperty().setCollectionStrategy(strategy);
         }
     }
 
