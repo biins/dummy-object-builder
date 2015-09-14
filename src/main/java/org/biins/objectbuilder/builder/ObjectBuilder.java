@@ -5,6 +5,9 @@ import org.biins.objectbuilder.builder.strategy.*;
 import org.biins.objectbuilder.types.Types;
 import org.biins.objectbuilder.util.ClassUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Martin Janys
  */
@@ -92,7 +95,16 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
         return this;
     }
 
-    private abstract class BuilderTransitions {
+    private abstract class AbstractTransitionsBuilder implements Builder<T> {
+
+        @Override
+        public List<T> build(int count) {
+            List<T> list =  new ArrayList<>(count);
+            for (int i = 0; i < count; i++) {
+                list.add(build());
+            }
+            return list;
+        }
 
         public ObjectBuilder<T> and() {
             return ObjectBuilder.this;
@@ -134,7 +146,7 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
         }
     }
 
-    public class PrimitiveObjectBuilder extends BuilderTransitions implements Builder<T> {
+    public class PrimitiveObjectBuilder extends AbstractTransitionsBuilder {
 
         private final org.biins.objectbuilder.builder.PrimitiveObjectBuilder<T> builder;
 
@@ -156,7 +168,7 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
         }
     }
 
-    public class WrapperObjectBuilder extends BuilderTransitions implements Builder<T> {
+    public class WrapperObjectBuilder extends AbstractTransitionsBuilder {
 
         private final org.biins.objectbuilder.builder.WrapperObjectBuilder<T> builder;
 
@@ -179,7 +191,7 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
         }
     }
 
-    public class ArrayObjectBuilder extends BuilderTransitions implements Builder<T> {
+    public class ArrayObjectBuilder extends AbstractTransitionsBuilder {
 
         private final org.biins.objectbuilder.builder.ArrayObjectBuilder<T> builder;
 
@@ -227,7 +239,7 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
         }
     }
 
-    public class CollectionObjectBuilder extends BuilderTransitions implements Builder<T> {
+    public class CollectionObjectBuilder extends AbstractTransitionsBuilder {
 
         private final org.biins.objectbuilder.builder.CollectionObjectBuilder<T> builder;
 
@@ -280,7 +292,7 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
         }
     }
 
-    public class StringObjectBuilder extends BuilderTransitions implements Builder<T> {
+    public class StringObjectBuilder extends AbstractTransitionsBuilder {
 
         private final org.biins.objectbuilder.builder.StringObjectBuilder builder;
 
