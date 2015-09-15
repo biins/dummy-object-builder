@@ -29,25 +29,25 @@ public class StringsTest {
     public void string(StringGeneratorStrategy buildStrategy) {
         String def = GenerateObject.forType(String.class)
                 .onWrapperProperty().setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT)
-                .onStringProperty().setGeneratorStrategy(buildStrategy)
+                .onString().setGeneratorStrategy(buildStrategy)
                 .build();
         String size5 = GenerateObject.forType(String.class)
-                .onStringProperty().setGeneratorStrategy(buildStrategy).setSize(5)
-                .onWrapperProperty().setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT)
+                .onString().setGeneratorStrategy(buildStrategy).setSize(5)
+                .onWrapper().setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT)
                 .build();
         String numeric = GenerateObject.forType(String.class)
-                .onStringProperty().setGeneratorStrategy(buildStrategy).setNumeric(true)
+                .onString().setGeneratorStrategy(buildStrategy).setNumeric(true)
                 .build();
         String alpha = GenerateObject.forType(String.class)
-                .onStringProperty().setGeneratorStrategy(buildStrategy).setAlpha(true)
+                .onString().setGeneratorStrategy(buildStrategy).setAlpha(true)
                 .build();
         String alphaLower = GenerateObject.forType(String.class)
-                .onStringProperty().setGeneratorStrategy(buildStrategy).setAttributes(true, true, false)
-                .onWrapperProperty().setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT)
+                .onString().setGeneratorStrategy(buildStrategy).setAttributes(true, true, false)
+                .onWrapper().setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT)
                 .build();
         String alphaNumericLower = GenerateObject.forType(String.class)
-                .onStringProperty().setGeneratorStrategy(buildStrategy).setLower(true)
-                .onWrapperProperty().setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT)
+                .onString().setGeneratorStrategy(buildStrategy).setLower(true)
+                .onWrapper().setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT)
                 .build();
 
         switch (buildStrategy) {

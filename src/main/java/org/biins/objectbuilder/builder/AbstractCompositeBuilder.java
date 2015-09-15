@@ -48,14 +48,14 @@ public abstract class AbstractCompositeBuilder<T, BUILDER> extends AbstractBuild
 
     protected Object createCompositeObject(Class<?> type, int ... size) {
         return ObjectBuilder.forType(type)
-                .onArrayProperty()
+                .onArray()
                     .setGeneratorStrategy(primitiveStrategy)
                     .setGeneratorStrategy(wrapperStrategy)
                     .setGeneratorStrategy(stringGeneratorStrategy)
                     .setGeneratorStrategy(collectionGeneratorStrategy)
                     .setGeneratorStrategy(arrayStrategy)
                 .setSize(decreaseDimension(size))
-                .onCollectionProperty()
+                .onCollection()
                     .setGeneratorStrategy(primitiveStrategy)
                     .setGeneratorStrategy(wrapperStrategy)
                     .setGeneratorStrategy(stringGeneratorStrategy)
@@ -81,8 +81,8 @@ public abstract class AbstractCompositeBuilder<T, BUILDER> extends AbstractBuild
     protected Object createRawObject(Class<?> type) {
         return ObjectBuilder.forType(type)
                 .onPrimitiveProperty().setGeneratorStrategy(primitiveStrategy)
-                .onWrapperProperty().setGeneratorStrategy(wrapperStrategy)
-                .onStringProperty().setGeneratorStrategy(stringGeneratorStrategy)
+                .onWrapper().setGeneratorStrategy(wrapperStrategy)
+                .onString().setGeneratorStrategy(stringGeneratorStrategy)
                 .build();
     }
 

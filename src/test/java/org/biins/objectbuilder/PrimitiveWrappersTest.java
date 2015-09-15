@@ -29,11 +29,11 @@ public class PrimitiveWrappersTest {
     public void wrapperObject(WrapperGeneratorStrategy buildStrategy) {
         Byte b = GenerateObject.forType(Byte.class)
                 .onPrimitiveProperty().setGeneratorStrategy(PrimitiveGeneratorStrategy.DEFAULT)
-                .onWrapperProperty().setGeneratorStrategy(buildStrategy)
+                .onWrapper().setGeneratorStrategy(buildStrategy)
                 .build();
         Short s = GenerateObject.forType(Short.class)
                 .onPrimitiveProperty().setGeneratorStrategy(PrimitiveGeneratorStrategy.DEFAULT)
-                .onWrapperProperty().setGeneratorStrategy(buildStrategy)
+                .onWrapper().setGeneratorStrategy(buildStrategy)
                 .build();
         Integer i = GenerateObject.forType(Integer.class)
                 .onWrapperProperty().setGeneratorStrategy(buildStrategy)

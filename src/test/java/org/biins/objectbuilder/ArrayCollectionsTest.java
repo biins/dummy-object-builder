@@ -6,7 +6,6 @@ import org.biins.objectbuilder.types.Types;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,13 +32,13 @@ public class ArrayCollectionsTest {
     public void arrayOfCollections(CollectionGeneratorStrategy collectionStrategy, ArrayGeneratorStrategy arrayStrategy) {
         // todo collectionOf ? builder/collectionBuilder
         List<Integer>[] arrayOfLists = GenerateObject.forType(List[].class).collectionOf(Types.typeOf(Integer.class))
-                .onCollectionProperty().setGeneratorStrategy(collectionStrategy).setSize(1)
-                .onArrayProperty().setGeneratorStrategy(arrayStrategy).setSize(2)
+                .onCollection().setGeneratorStrategy(collectionStrategy).setSize(1)
+                .onArray().setGeneratorStrategy(arrayStrategy).setSize(2)
                 .build();
 
         List<String[]> listOfArrays = GenerateObject.forType(List.class).collectionOf(Types.typeOf(String[].class))
-                .onCollectionProperty().setGeneratorStrategy(collectionStrategy).setSize(1)
-                .onArrayProperty().setGeneratorStrategy(arrayStrategy).setSize(2)
+                .onCollection().setGeneratorStrategy(collectionStrategy).setSize(1)
+                .onArray().setGeneratorStrategy(arrayStrategy).setSize(2)
                 .build();
 
         switch (collectionStrategy) {

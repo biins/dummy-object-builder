@@ -1,6 +1,5 @@
 package org.biins.objectbuilder.builder;
 
-import org.apache.commons.lang.Validate;
 import org.biins.objectbuilder.builder.strategy.*;
 import org.biins.objectbuilder.types.Types;
 import org.biins.objectbuilder.util.ClassUtils;
@@ -49,25 +48,25 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
         return onWrapperProperty().setGeneratorStrategy(strategy);
     }
 
-    public ArrayObjectBuilder onArrayProperty() {
+    public ArrayObjectBuilder onArray() {
         return arrayObjectBuilder;
     }
-    public ArrayObjectBuilder onArrayProperty(ArrayGeneratorStrategy strategy) {
-        return onArrayProperty().setGeneratorStrategy(strategy);
+    public ArrayObjectBuilder onArray(ArrayGeneratorStrategy strategy) {
+        return onArray().setGeneratorStrategy(strategy);
     }
 
-    public StringObjectBuilder onStringProperty() {
+    public StringObjectBuilder onString() {
         return stringObjectBuilder;
     }
-    public StringObjectBuilder onStringProperty(StringGeneratorStrategy strategy) {
-        return onStringProperty().setGeneratorStrategy(strategy);
+    public StringObjectBuilder onString(StringGeneratorStrategy strategy) {
+        return onString().setGeneratorStrategy(strategy);
     }
 
-    public CollectionObjectBuilder onCollectionProperty() {
+    public CollectionObjectBuilder onCollection() {
         return collectionObjectBuilder;
     }
-    public CollectionObjectBuilder onCollectionProperty(CollectionGeneratorStrategy strategy) {
-        return onCollectionProperty().setGeneratorStrategy(strategy);
+    public CollectionObjectBuilder onCollection(CollectionGeneratorStrategy strategy) {
+        return onCollection().setGeneratorStrategy(strategy);
     }
 
     public T build() {
@@ -110,39 +109,39 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
             return ObjectBuilder.this;
         }
 
-        public PrimitiveObjectBuilder onPrimitiveProperty() {
+        public PrimitiveObjectBuilder onPrimitive() {
             return ObjectBuilder.this.primitiveObjectBuilder;
         }
-        public PrimitiveObjectBuilder onPrimitiveProperty(PrimitiveGeneratorStrategy strategy) {
-            return onPrimitiveProperty().setGeneratorStrategy(strategy);
+        public PrimitiveObjectBuilder onPrimitive(PrimitiveGeneratorStrategy strategy) {
+            return onPrimitive().setGeneratorStrategy(strategy);
         }
 
-        public WrapperObjectBuilder onWrapperProperty() {
+        public WrapperObjectBuilder onWrapper() {
             return ObjectBuilder.this.wrapperObjectBuilder;
         }
-        public WrapperObjectBuilder onWrapperProperty(WrapperGeneratorStrategy strategy) {
-            return onWrapperProperty().setGeneratorStrategy(strategy);
+        public WrapperObjectBuilder onWrapper(WrapperGeneratorStrategy strategy) {
+            return onWrapper().setGeneratorStrategy(strategy);
         }
 
-        public ArrayObjectBuilder onArrayProperty() {
+        public ArrayObjectBuilder onArray() {
             return ObjectBuilder.this.arrayObjectBuilder;
         }
-        public ArrayObjectBuilder onArrayProperty(ArrayGeneratorStrategy strategy) {
-            return onArrayProperty().setGeneratorStrategy(strategy);
+        public ArrayObjectBuilder onArray(ArrayGeneratorStrategy strategy) {
+            return onArray().setGeneratorStrategy(strategy);
         }
 
-        public StringObjectBuilder onStringProperty() {
+        public StringObjectBuilder onString() {
             return ObjectBuilder.this.stringObjectBuilder;
         }
-        public StringObjectBuilder onStringProperty(StringGeneratorStrategy strategy) {
-            return onStringProperty().setGeneratorStrategy(strategy);
+        public StringObjectBuilder onString(StringGeneratorStrategy strategy) {
+            return onString().setGeneratorStrategy(strategy);
         }
 
-        public CollectionObjectBuilder onCollectionProperty() {
+        public CollectionObjectBuilder onCollection() {
             return ObjectBuilder.this.collectionObjectBuilder;
         }
-        public CollectionObjectBuilder onCollectionProperty(CollectionGeneratorStrategy strategy) {
-            return onCollectionProperty().setGeneratorStrategy(strategy);
+        public CollectionObjectBuilder onCollection(CollectionGeneratorStrategy strategy) {
+            return onCollection().setGeneratorStrategy(strategy);
         }
     }
 

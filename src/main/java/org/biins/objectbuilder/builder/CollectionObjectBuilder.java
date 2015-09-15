@@ -107,14 +107,14 @@ public class CollectionObjectBuilder<T> extends AbstractCompositeBuilder<T, Coll
 
     protected Object createCompositeObject(Class<?> type, Types of, int ... size) {
         return ObjectBuilder.forType(type)
-                .onArrayProperty()
+                .onArray()
                     .setGeneratorStrategy(primitiveStrategy)
                     .setGeneratorStrategy(wrapperStrategy)
                     .setGeneratorStrategy(stringGeneratorStrategy)
                     .setGeneratorStrategy(collectionGeneratorStrategy)
                     .setGeneratorStrategy(arrayStrategy)
                     .setSize(decreaseDimension(size))
-                .onCollectionProperty()
+                .onCollection()
                     .setGeneratorStrategy(primitiveStrategy)
                     .setGeneratorStrategy(wrapperStrategy)
                     .setGeneratorStrategy(stringGeneratorStrategy)
