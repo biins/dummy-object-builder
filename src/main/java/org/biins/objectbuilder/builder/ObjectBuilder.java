@@ -19,8 +19,6 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
     private final StringObjectBuilder stringObjectBuilder;
     private final CollectionObjectBuilder collectionObjectBuilder;
 
-    private Types<?> collectionElementType;
-
     protected ObjectBuilder(Class<T> cls) {
         super(cls);
         primitiveObjectBuilder = new PrimitiveObjectBuilder();
@@ -83,15 +81,10 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
             return stringObjectBuilder.buildString();
         }
         else if (ClassUtils.isCollection(cls)) {
-            return collectionObjectBuilder.of(collectionElementType).buildCollection();
+            return collectionObjectBuilder.buildCollection();
         }
 
         throw new IllegalStateException("Unknown type");
-    }
-
-    public ObjectBuilder<T> collectionOf(Types<?> type) {
-        this.collectionElementType = type;
-        return this;
     }
 
     private abstract class AbstractTransitionsBuilder implements Builder<T> {
@@ -145,44 +138,7 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
         }
     }
 
-
-    @SuppressWarnings("unchecked")
-    private abstract class AbstractCompositeTransitionsBuilder<TYPE extends AbstractCompositeBuilder, BUILDER> extends AbstractTransitionsBuilder {
-
-        protected TYPE builder;
-
-        public AbstractCompositeTransitionsBuilder(TYPE builder) {
-            this.builder = builder;
-        }
-
-        public BUILDER setGeneratorStrategy(PrimitiveGeneratorStrategy strategy) {
-            builder.setGeneratorStrategy(strategy);
-            return (BUILDER) this;
-        }
-
-        public BUILDER setGeneratorStrategy(WrapperGeneratorStrategy strategy) {
-            builder.setGeneratorStrategy(strategy);
-            return (BUILDER) this;
-        }
-
-        public BUILDER setGeneratorStrategy(StringGeneratorStrategy strategy) {
-            builder.setGeneratorStrategy(strategy);
-            return (BUILDER) this;
-        }
-
-        public BUILDER setGeneratorStrategy(CollectionGeneratorStrategy strategy) {
-            builder.setGeneratorStrategy(strategy);
-            return (BUILDER) this;
-        }
-
-        public BUILDER setGeneratorStrategy(ArrayGeneratorStrategy strategy) {
-            builder.setGeneratorStrategy(strategy);
-            return (BUILDER) this;
-        }
-    }
-
-
-        public class PrimitiveObjectBuilder extends AbstractTransitionsBuilder {
+    public class PrimitiveObjectBuilder extends AbstractTransitionsBuilder {
 
         private final org.biins.objectbuilder.builder.PrimitiveObjectBuilder<T> builder;
 
@@ -227,15 +183,43 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
         }
     }
 
-    public class ArrayObjectBuilder extends AbstractCompositeTransitionsBuilder<org.biins.objectbuilder.builder.ArrayObjectBuilder, ArrayObjectBuilder> {
+    public class ArrayObjectBuilder extends AbstractTransitionsBuilder {
+
+        private final org.biins.objectbuilder.builder.ArrayObjectBuilder builder;
 
         protected ArrayObjectBuilder() {
-            super(org.biins.objectbuilder.builder.ArrayObjectBuilder.forType(cls));
+            this.builder = org.biins.objectbuilder.builder.ArrayObjectBuilder.forType(cls);
         }
 
         @Override
         public T build() {
             return ObjectBuilder.this.build();
+        }
+
+
+        public ArrayObjectBuilder setGeneratorStrategy(PrimitiveGeneratorStrategy strategy) {
+            builder.setGeneratorStrategy(strategy);
+            return this;
+        }
+
+        public ArrayObjectBuilder setGeneratorStrategy(WrapperGeneratorStrategy strategy) {
+            builder.setGeneratorStrategy(strategy);
+            return this;
+        }
+
+        public ArrayObjectBuilder setGeneratorStrategy(StringGeneratorStrategy strategy) {
+            builder.setGeneratorStrategy(strategy);
+            return this;
+        }
+
+        public ArrayObjectBuilder setGeneratorStrategy(CollectionGeneratorStrategy strategy) {
+            builder.setGeneratorStrategy(strategy);
+            return this;
+        }
+
+        public ArrayObjectBuilder setGeneratorStrategy(ArrayGeneratorStrategy strategy) {
+            builder.setGeneratorStrategy(strategy);
+            return this;
         }
 
         public ArrayObjectBuilder setSize(int ... size) {
@@ -249,14 +233,47 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
         }
     }
 
-    public class CollectionObjectBuilder extends AbstractCompositeTransitionsBuilder<org.biins.objectbuilder.builder.CollectionObjectBuilder, CollectionObjectBuilder> {
+    public class CollectionObjectBuilder extends AbstractTransitionsBuilder {
+
+        private final org.biins.objectbuilder.builder.CollectionObjectBuilder<T> builder;
 
         protected CollectionObjectBuilder() {
-            super(org.biins.objectbuilder.builder.CollectionObjectBuilder.forType(cls));
+            this.builder = org.biins.objectbuilder.builder.CollectionObjectBuilder.forType(cls);
         }
 
-        private CollectionObjectBuilder of(Types<?> types) {
+        public CollectionObjectBuilder of(Types<?> types) {
             builder.of(types);
+            return this;
+        }
+
+        public CollectionObjectBuilder setSize(int ... size) {
+            builder.setSize(size);
+            return this;
+        }
+
+
+        public CollectionObjectBuilder setGeneratorStrategy(PrimitiveGeneratorStrategy strategy) {
+            builder.setGeneratorStrategy(strategy);
+            return this;
+        }
+
+        public CollectionObjectBuilder setGeneratorStrategy(WrapperGeneratorStrategy strategy) {
+            builder.setGeneratorStrategy(strategy);
+            return this;
+        }
+
+        public CollectionObjectBuilder setGeneratorStrategy(StringGeneratorStrategy strategy) {
+            builder.setGeneratorStrategy(strategy);
+            return this;
+        }
+
+        public CollectionObjectBuilder setGeneratorStrategy(CollectionGeneratorStrategy strategy) {
+            builder.setGeneratorStrategy(strategy);
+            return this;
+        }
+
+        public CollectionObjectBuilder setGeneratorStrategy(ArrayGeneratorStrategy strategy) {
+            builder.setGeneratorStrategy(strategy);
             return this;
         }
 
@@ -265,14 +282,9 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
             return ObjectBuilder.this.build();
         }
 
-        public CollectionObjectBuilder setSize(int ... size) {
-            builder.setSize(size);
-            return this;
-        }
-
         @SuppressWarnings("unchecked")
         public T buildCollection() {
-            return (T) builder.buildCollection();
+            return builder.buildCollection();
         }
     }
 

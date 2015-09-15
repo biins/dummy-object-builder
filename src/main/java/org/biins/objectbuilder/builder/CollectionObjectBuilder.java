@@ -115,13 +115,13 @@ public class CollectionObjectBuilder<T> extends AbstractCompositeBuilder<T, Coll
                     .setGeneratorStrategy(arrayStrategy)
                     .setSize(decreaseDimension(size))
                 .onCollection()
+                    .setSize(decreaseDimension(size))
+                    .of(of)
                     .setGeneratorStrategy(primitiveStrategy)
                     .setGeneratorStrategy(wrapperStrategy)
                     .setGeneratorStrategy(stringGeneratorStrategy)
                     .setGeneratorStrategy(collectionGeneratorStrategy)
                     .setGeneratorStrategy(arrayStrategy)
-                    .setSize(decreaseDimension(size))
-                .and().collectionOf(of)
                 .build();
     }
 

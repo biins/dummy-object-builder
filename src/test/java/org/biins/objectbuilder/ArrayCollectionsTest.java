@@ -30,14 +30,13 @@ public class ArrayCollectionsTest {
     @SuppressWarnings("unchecked")
     @Test(dataProvider = "buildStrategy")
     public void arrayOfCollections(CollectionGeneratorStrategy collectionStrategy, ArrayGeneratorStrategy arrayStrategy) {
-        // todo collectionOf ? builder/collectionBuilder
-        List<Integer>[] arrayOfLists = GenerateObject.forType(List[].class).collectionOf(Types.typeOf(Integer.class))
-                .onCollection().setGeneratorStrategy(collectionStrategy).setSize(1)
+        List<Integer>[] arrayOfLists = GenerateObject.forType(List[].class)
+                .onCollection().setGeneratorStrategy(collectionStrategy).setSize(1).of(Types.typeOf(Integer.class))
                 .onArray().setGeneratorStrategy(arrayStrategy).setSize(2)
                 .build();
 
-        List<String[]> listOfArrays = GenerateObject.forType(List.class).collectionOf(Types.typeOf(String[].class))
-                .onCollection().setGeneratorStrategy(collectionStrategy).setSize(1)
+        List<String[]> listOfArrays = GenerateObject.forType(List.class)
+                .onCollection().setGeneratorStrategy(collectionStrategy).setSize(1).of(Types.typeOf(String[].class))
                 .onArray().setGeneratorStrategy(arrayStrategy).setSize(2)
                 .build();
 
