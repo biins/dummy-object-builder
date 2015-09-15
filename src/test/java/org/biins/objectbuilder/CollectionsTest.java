@@ -53,15 +53,74 @@ public class CollectionsTest {
                 .build();
     }
 
-    @Test(dataProvider = "buildStrategy", expectedExceptions = IllegalArgumentException.class)
+    @Test(dataProvider = "buildStrategy")
     public void collectionSizeIllegalArgumentMissingType(CollectionGeneratorStrategy buildStrategy) {
-        GenerateObject.forType(List.class)
-                .onCollectionProperty().setGeneratorStrategy(buildStrategy)
+        List<String> list = GenerateObject.forType(List.class)
+                .onCollectionProperty().setGeneratorStrategy(buildStrategy).setSize(1)
                 .build();
+
+        switch (buildStrategy) {
+            case NULL:
+                assertNull(list);
+                break;
+            default:
+                assertEquals(list, Collections.emptyList());
+        }
     }
 
+    @Test(dataProvider = "buildStrategy")
     public void collectionOfCollectionTypeMishmashObject(CollectionGeneratorStrategy buildStrategy) {
-        // todo
+        List<String> list = GenerateObject.forType(List.class).collectionOf(Types.typeOf(Integer.class))
+                .onCollectionProperty().setGeneratorStrategy(buildStrategy).setSize(1)
+                .build();
+
+        switch (buildStrategy) {
+            case DEFAULT:
+                assertEquals(list, Collections.emptyList());
+                break;
+            case SINGLETON:
+            case VALUE:
+                assertEquals(list.size(), 1);
+                assertEquals(list, Collections.singleton(0));
+                try {
+                    String s = list.get(0);
+                    fail();
+                }
+                catch (ClassCastException ignored) {
+                }
+                break;
+            case NULL:
+                assertNull(list);
+                break;
+        }
+    }
+
+    @Test(dataProvider = "buildStrategy")
+    public void collectionOfCollectionTypeMissingObject(CollectionGeneratorStrategy buildStrategy) {
+        List<String> list = GenerateObject.forType(List.class)
+                .onCollectionProperty().setGeneratorStrategy(buildStrategy).setSize(1)
+                .build();
+
+        List<Collection<Integer>> listOfCollections = GenerateObject.forType(List.class).collectionOf(Types.typeOf(Collection.class))
+                .onCollectionProperty().setGeneratorStrategy(buildStrategy).setSize(1)
+                .build();
+
+        switch (buildStrategy) {
+            case SINGLETON:
+            case VALUE:
+                assertEquals(list, Collections.emptyList());
+                assertEquals(listOfCollections, Collections.singletonList(Collections.emptyList()));
+                break;
+            case DEFAULT:
+                assertEquals(list, Collections.emptyList());
+                assertEquals(listOfCollections, Collections.emptyList());
+                break;
+            case NULL:
+                assertNull(list);
+                assertNull(listOfCollections);
+                break;
+        }
+
     }
 
     @Test(dataProvider = "buildStrategy")

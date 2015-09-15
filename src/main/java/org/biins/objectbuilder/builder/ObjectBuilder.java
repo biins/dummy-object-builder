@@ -84,7 +84,6 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
             return stringObjectBuilder.buildString();
         }
         else if (ClassUtils.isCollection(cls)) {
-            Validate.notNull(collectionElementType, "Generation collection without element type. Use ObjectBuilder#collectionOf() method to setup");
             return collectionObjectBuilder.of(collectionElementType).buildCollection();
         }
 
@@ -240,11 +239,6 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
             return ObjectBuilder.this.build();
         }
 
-        public ArrayObjectBuilder setSize(int size) {
-            builder.setSize(size);
-            return this;
-        }
-
         public ArrayObjectBuilder setSize(int ... size) {
             builder.setSize(size);
             return this;
@@ -270,11 +264,6 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
         @Override
         public T build() {
             return ObjectBuilder.this.build();
-        }
-
-        public CollectionObjectBuilder setSize(int size) {
-            builder.setSize(size);
-            return this;
         }
 
         public CollectionObjectBuilder setSize(int ... size) {

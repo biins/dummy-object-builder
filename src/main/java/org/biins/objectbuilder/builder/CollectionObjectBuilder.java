@@ -29,12 +29,6 @@ public class CollectionObjectBuilder<T> extends AbstractCompositeBuilder<T, Coll
         return new CollectionObjectBuilder<>(cls);
     }
 
-    public CollectionObjectBuilder<T> setSize(int size) {
-        this.size = new int[]{size};
-        validateSize();
-        return this;
-    }
-
     public CollectionObjectBuilder<T> setSize(int ... size) {
         this.size = size;
         validateSize();
@@ -91,9 +85,11 @@ public class CollectionObjectBuilder<T> extends AbstractCompositeBuilder<T, Coll
     private Collection createCollection(Class<?> collectionType, Types elementType, int[] sizes) {
         int size = countSize(sizes);
         List list = new ArrayList(size);
-        for (int i = 0; i < size; i++) {
-            Object value = createObject(elementType, sizes);
-            list.add(i, value);
+        if (elementType != null) {
+            for (int i = 0; i < size; i++) {
+                Object value = createObject(elementType, sizes);
+                list.add(i, value);
+            }
         }
 
         return createCollectionOfType(collectionType, list);

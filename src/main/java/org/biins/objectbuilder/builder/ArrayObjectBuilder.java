@@ -22,12 +22,6 @@ public class ArrayObjectBuilder<T> extends AbstractCompositeBuilder<T, ArrayObje
         return new ArrayObjectBuilder<T>(cls);
     }
 
-    public ArrayObjectBuilder<T> setSize(int size) {
-        this.size = new int[]{size};
-        validateSize();
-        return this;
-    }
-
     public ArrayObjectBuilder<T> setSize(int ... size) {
         this.size = size;
         validateSize();
