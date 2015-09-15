@@ -11,7 +11,7 @@ import java.util.List;
  * @author Martin Janys
  */
 @SuppressWarnings("unused")
-public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
+public class ObjectBuilder extends AbstractBuilder implements Builder {
 
     private final PrimitiveObjectBuilder primitiveObjectBuilder;
     private final WrapperObjectBuilder wrapperObjectBuilder;
@@ -19,17 +19,12 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
     private final StringObjectBuilder stringObjectBuilder;
     private final CollectionObjectBuilder collectionObjectBuilder;
 
-    protected ObjectBuilder(Class<T> cls) {
-        super(cls);
+    public ObjectBuilder() {
         primitiveObjectBuilder = new PrimitiveObjectBuilder();
         wrapperObjectBuilder = new WrapperObjectBuilder();
         arrayObjectBuilder = new ArrayObjectBuilder();
         stringObjectBuilder = new StringObjectBuilder();
         collectionObjectBuilder = new CollectionObjectBuilder();
-    }
-
-    public static <T> ObjectBuilder<T> forType(Class<T> cls) {
-        return new ObjectBuilder<>(cls);
     }
 
     public PrimitiveObjectBuilder onPrimitiveProperty() {
@@ -67,38 +62,39 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
         return onCollection().setGeneratorStrategy(strategy);
     }
 
-    public T build() {
-        if (ClassUtils.isPrimitive(cls)) {
-            return primitiveObjectBuilder.buildPrimitive();
+    @Override
+    public <T> T build(Class<T> type) {
+        if (ClassUtils.isPrimitive(type)) {
+            return primitiveObjectBuilder.buildPrimitive(type);
         }
-        else if (ClassUtils.isWrapperClass(cls)) {
-            return wrapperObjectBuilder.buildPrimitiveWrapper();
+        else if (ClassUtils.isWrapperClass(type)) {
+            return wrapperObjectBuilder.buildPrimitiveWrapper(type);
         }
-        else if (ClassUtils.isArray(cls)) {
-            return arrayObjectBuilder.buildArray();
+        else if (ClassUtils.isArray(type)) {
+            return arrayObjectBuilder.buildArray(type);
         }
-        else if (ClassUtils.isString(cls)) {
+        else if (ClassUtils.isString(type)) {
             return stringObjectBuilder.buildString();
         }
-        else if (ClassUtils.isCollection(cls)) {
-            return collectionObjectBuilder.buildCollection();
+        else if (ClassUtils.isCollection(type)) {
+            return collectionObjectBuilder.buildCollection(type);
         }
 
         throw new IllegalStateException("Unknown type");
     }
 
-    private abstract class AbstractTransitionsBuilder implements Builder<T> {
+    private abstract class AbstractTransitionsBuilder implements Builder {
 
         @Override
-        public List<T> build(int count) {
+        public <T> List<T> build(Class<T> type, int count) {
             List<T> list =  new ArrayList<>(count);
             for (int i = 0; i < count; i++) {
-                list.add(build());
+                list.add(build(type));
             }
             return list;
         }
 
-        public ObjectBuilder<T> and() {
+        public ObjectBuilder and() {
             return ObjectBuilder.this;
         }
 
@@ -140,14 +136,14 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
 
     public class PrimitiveObjectBuilder extends AbstractTransitionsBuilder {
 
-        private final org.biins.objectbuilder.builder.PrimitiveObjectBuilder<T> builder;
+        private final org.biins.objectbuilder.builder.PrimitiveObjectBuilder builder;
 
         protected PrimitiveObjectBuilder() {
-            builder = org.biins.objectbuilder.builder.PrimitiveObjectBuilder.forType(ObjectBuilder.this.cls);
+            builder = new org.biins.objectbuilder.builder.PrimitiveObjectBuilder();
         }
 
-        public T build() {
-            return ObjectBuilder.this.build();
+        public <T> T build(Class<T> type) {
+            return ObjectBuilder.this.build(type);
         }
 
         public PrimitiveObjectBuilder setGeneratorStrategy(PrimitiveGeneratorStrategy strategy) {
@@ -155,22 +151,22 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
             return this;
         }
 
-        public T buildPrimitive() {
-            return builder.buildPrimitive();
+        public <T> T buildPrimitive(Class<T> type) {
+            return builder.buildPrimitive(type);
         }
     }
 
     public class WrapperObjectBuilder extends AbstractTransitionsBuilder {
 
-        private final org.biins.objectbuilder.builder.WrapperObjectBuilder<T> builder;
+        private final org.biins.objectbuilder.builder.WrapperObjectBuilder builder;
 
         protected WrapperObjectBuilder() {
-            builder = org.biins.objectbuilder.builder.WrapperObjectBuilder.forType(cls);
+            builder = new org.biins.objectbuilder.builder.WrapperObjectBuilder();
         }
 
         @Override
-        public T build() {
-            return ObjectBuilder.this.build();
+        public <T> T build(Class<T> type) {
+            return ObjectBuilder.this.build(type);
         }
 
         public WrapperObjectBuilder setGeneratorStrategy(WrapperGeneratorStrategy strategy) {
@@ -178,8 +174,8 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
             return this;
         }
 
-        public T buildPrimitiveWrapper() {
-            return builder.buildPrimitiveWrapper();
+        public <T> T buildPrimitiveWrapper(Class<T> type) {
+            return builder.buildPrimitiveWrapper(type);
         }
     }
 
@@ -188,12 +184,12 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
         private final org.biins.objectbuilder.builder.ArrayObjectBuilder builder;
 
         protected ArrayObjectBuilder() {
-            this.builder = org.biins.objectbuilder.builder.ArrayObjectBuilder.forType(cls);
+            this.builder = new org.biins.objectbuilder.builder.ArrayObjectBuilder();
         }
 
         @Override
-        public T build() {
-            return ObjectBuilder.this.build();
+        public <T> T build(Class<T> type) {
+            return ObjectBuilder.this.build(type);
         }
 
 
@@ -228,17 +224,17 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
         }
 
         @SuppressWarnings("unchecked")
-        public T buildArray() {
-            return (T) builder.buildArray();
+        public <T> T buildArray(Class<T> type) {
+            return (T) builder.buildArray(type);
         }
     }
 
     public class CollectionObjectBuilder extends AbstractTransitionsBuilder {
 
-        private final org.biins.objectbuilder.builder.CollectionObjectBuilder<T> builder;
+        private final org.biins.objectbuilder.builder.CollectionObjectBuilder builder;
 
         protected CollectionObjectBuilder() {
-            this.builder = org.biins.objectbuilder.builder.CollectionObjectBuilder.forType(cls);
+            this.builder = new org.biins.objectbuilder.builder.CollectionObjectBuilder();
         }
 
         public CollectionObjectBuilder of(Types<?> types) {
@@ -278,13 +274,13 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
         }
 
         @Override
-        public T build() {
-            return ObjectBuilder.this.build();
+        public <T> T build(Class<T> type) {
+            return ObjectBuilder.this.build(type);
         }
 
         @SuppressWarnings("unchecked")
-        public T buildCollection() {
-            return builder.buildCollection();
+        public <T> T buildCollection(Class<T> type) {
+            return builder.buildCollection(type);
         }
     }
 
@@ -293,12 +289,12 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
         private final org.biins.objectbuilder.builder.StringObjectBuilder builder;
 
         protected StringObjectBuilder() {
-            builder = org.biins.objectbuilder.builder.StringObjectBuilder.forType();
+            builder = new org.biins.objectbuilder.builder.StringObjectBuilder();
         }
 
         @Override
-        public T build() {
-            return ObjectBuilder.this.build();
+        public <T> T build(Class<T> type) {
+            return ObjectBuilder.this.build(type);
         }
 
         public StringObjectBuilder setSize(int size) {
@@ -332,8 +328,8 @@ public class ObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
         }
 
         @SuppressWarnings("unchecked")
-        public T buildString() {
-            return (T) builder.buildString();
+        public <T> T buildString() {
+            return (T) builder.buildString(String.class);
         }
     }
 

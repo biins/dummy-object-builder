@@ -15,21 +15,13 @@ import java.util.List;
  * @author Martin Janys
  */
 @SuppressWarnings("unchecked")
-public class CollectionObjectBuilder<T> extends AbstractCompositeBuilder<T, CollectionObjectBuilder> implements Builder<T> {
+public class CollectionObjectBuilder extends AbstractCompositeBuilder<CollectionObjectBuilder> implements Builder {
 
     protected int[] size = new int[]{0};
 
     private Types<?> elementType;
 
-    protected CollectionObjectBuilder(Class<T> cls) {
-        super(cls);
-    }
-
-    static <T> CollectionObjectBuilder<T> forType(Class<T> cls) {
-        return new CollectionObjectBuilder<>(cls);
-    }
-
-    public CollectionObjectBuilder<T> setSize(int ... size) {
+    public CollectionObjectBuilder setSize(int ... size) {
         this.size = size;
         validateSize();
         return this;
@@ -44,22 +36,22 @@ public class CollectionObjectBuilder<T> extends AbstractCompositeBuilder<T, Coll
     }
 
 
-    public CollectionObjectBuilder<T> of(Types<?> elementType) {
+    public CollectionObjectBuilder of(Types<?> elementType) {
         this.elementType = elementType;
         return this;
     }
 
     @Override
-    public T build() {
-        return buildCollection();
+    public <T> T build(Class<T> type) {
+        return buildCollection(type);
     }
 
-    public T buildCollection() {
-        CollectionType<T> collectionType = CollectionTypeRegistry.get(cls);
+    public <T> T buildCollection(Class<T> type) {
+        CollectionType<T> collectionType = CollectionTypeRegistry.get(type);
         return buildCollection(collectionType, elementType, size);
     }
 
-    private T buildCollection(CollectionType<T> collectionType, Types elementType, int ... size) {
+    private <T> T buildCollection(CollectionType<T> collectionType, Types elementType, int ... size) {
         switch (collectionGeneratorStrategy) {
             case NULL:
                 return null;
@@ -73,11 +65,11 @@ public class CollectionObjectBuilder<T> extends AbstractCompositeBuilder<T, Coll
         }
     }
 
-    private T buildCollectionInternal(CollectionType<T> collectionType, Types elementType, int ... sizes) {
+    private <T> T buildCollectionInternal(CollectionType<T> collectionType, Types elementType, int ... sizes) {
         return buildCollectionInternal(collectionType.getType(), elementType, sizes);
     }
 
-    private T buildCollectionInternal(Class<T> collectionType, Types elementType, int ... sizes) {
+    private <T> T buildCollectionInternal(Class<T> collectionType, Types elementType, int ... sizes) {
         Collection collection = createCollection(collectionType, elementType, sizes);
         return (T) collection;
     }
@@ -106,7 +98,7 @@ public class CollectionObjectBuilder<T> extends AbstractCompositeBuilder<T, Coll
     }
 
     protected Object createCompositeObject(Class<?> type, Types of, int ... size) {
-        return ObjectBuilder.forType(type)
+        return new ObjectBuilder()
                 .onArray()
                     .setGeneratorStrategy(primitiveStrategy)
                     .setGeneratorStrategy(wrapperStrategy)
@@ -115,14 +107,14 @@ public class CollectionObjectBuilder<T> extends AbstractCompositeBuilder<T, Coll
                     .setGeneratorStrategy(arrayStrategy)
                     .setSize(decreaseDimension(size))
                 .onCollection()
-                    .setSize(decreaseDimension(size))
-                    .of(of)
+                .of(of)
                     .setGeneratorStrategy(primitiveStrategy)
                     .setGeneratorStrategy(wrapperStrategy)
                     .setGeneratorStrategy(stringGeneratorStrategy)
                     .setGeneratorStrategy(collectionGeneratorStrategy)
                     .setGeneratorStrategy(arrayStrategy)
-                .build();
+                    .setSize(decreaseDimension(size))
+                .build(type);
     }
 
     private int countSize(int[] sizes) {

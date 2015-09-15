@@ -1,5 +1,6 @@
 package org.biins.objectbuilder;
 
+import org.biins.objectbuilder.builder.ObjectBuilder;
 import org.biins.objectbuilder.builder.strategy.PrimitiveGeneratorStrategy;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -24,30 +25,30 @@ public class PrimitivesTest {
 
     @Test(dataProvider = "buildStrategy")
     public void primitiveObject(PrimitiveGeneratorStrategy buildStrategy) {
-        byte b = GenerateObject.forType(byte.class)
+        byte b = new ObjectBuilder()
                 .onPrimitiveProperty().setGeneratorStrategy(buildStrategy)
-                .build();
-        short s = GenerateObject.forType(short.class)
+                .build(byte.class);
+        short s = new ObjectBuilder()
                 .onPrimitiveProperty().setGeneratorStrategy(buildStrategy)
-                .build();
-        int i = GenerateObject.forType(int.class)
+                .build(short.class);
+        int i = new ObjectBuilder()
                 .onPrimitiveProperty().setGeneratorStrategy(buildStrategy)
-                .build();
-        long l = GenerateObject.forType(long.class)
+                .build(int.class);
+        long l = new ObjectBuilder()
                 .onPrimitiveProperty().setGeneratorStrategy(buildStrategy)
-                .build();
-        float f = GenerateObject.forType(float.class)
+                .build(long.class);
+        float f = new ObjectBuilder()
                 .onPrimitiveProperty().setGeneratorStrategy(buildStrategy)
-                .build();
-        double d = GenerateObject.forType(double.class)
+                .build(float.class);
+        double d = new ObjectBuilder()
                 .onPrimitiveProperty().setGeneratorStrategy(buildStrategy)
-                .build();
-        char c = GenerateObject.forType(char.class)
+                .build(double.class);
+        char c = new ObjectBuilder()
                 .onPrimitiveProperty().setGeneratorStrategy(buildStrategy)
-                .build();
-        boolean bool = GenerateObject.forType(boolean.class)
+                .build(char.class);
+        boolean bool = new ObjectBuilder()
                 .onPrimitiveProperty().setGeneratorStrategy(buildStrategy)
-                .build();
+                .build(boolean.class);
 
         switch (buildStrategy) {
             case DEFAULT:

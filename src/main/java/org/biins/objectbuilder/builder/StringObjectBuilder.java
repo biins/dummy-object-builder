@@ -1,5 +1,6 @@
 package org.biins.objectbuilder.builder;
 
+import org.apache.commons.lang.Validate;
 import org.biins.objectbuilder.ConstantPool;
 import org.biins.objectbuilder.builder.strategy.StringGeneratorStrategy;
 import org.biins.objectbuilder.types.string.StringType;
@@ -8,7 +9,7 @@ import org.biins.objectbuilder.types.string.StringTypeRegistry;
 /**
  * @author Martin Janys
  */
-public class StringObjectBuilder extends AbstractBuilder<String> implements Builder<String> {
+public class StringObjectBuilder extends AbstractBuilder implements Builder {
 
     protected StringGeneratorStrategy stringStrategy = StringGeneratorStrategy.DEFAULT;
 
@@ -16,14 +17,6 @@ public class StringObjectBuilder extends AbstractBuilder<String> implements Buil
     private Boolean lower = null;
     private Boolean alpha = null;
     private Boolean numeric = null;
-
-    protected StringObjectBuilder() {
-        super(String.class);
-    }
-
-    static <T> StringObjectBuilder forType() {
-        return new StringObjectBuilder();
-    }
 
     public StringObjectBuilder setGeneratorStrategy(StringGeneratorStrategy stringStrategy) {
         this.stringStrategy = stringStrategy;
@@ -57,25 +50,31 @@ public class StringObjectBuilder extends AbstractBuilder<String> implements Buil
         return this;
     }
 
-    @Override
     public String build() {
-        return buildString();
+        return build(String.class);
     }
 
-    public String buildString() {
+    @Override
+    public <T> T build(Class<T> type) {
+        Validate.isTrue(String.class.isAssignableFrom(type));
+        return buildString(type);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T buildString(Class<T> type) {
         StringType stringType = StringTypeRegistry.get();
         switch (stringStrategy) {
             case EMPTY:
-                return ConstantPool.EMPTY_STRING;
+                return (T) ConstantPool.EMPTY_STRING;
             case NULL:
                 return null;
             case UUID:
-                return stringType.generateUUID();
+                return (T) stringType.generateUUID();
             case VALUE:
-                return stringType.generate(size, valueOrElse(lower, false), valueOrElse(alpha, !isAttributesSet()), valueOrElse(numeric, !isAttributesSet()));
+                return (T) stringType.generate(size, valueOrElse(lower, false), valueOrElse(alpha, !isAttributesSet()), valueOrElse(numeric, !isAttributesSet()));
             case DEFAULT:
             default:
-                return ConstantPool.EMPTY_STRING;
+                return (T) ConstantPool.EMPTY_STRING;
         }
     }
 

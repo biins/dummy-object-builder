@@ -1,5 +1,6 @@
 package org.biins.objectbuilder;
 
+import org.biins.objectbuilder.builder.ObjectBuilder;
 import org.biins.objectbuilder.builder.strategy.StringGeneratorStrategy;
 import org.biins.objectbuilder.builder.strategy.WrapperGeneratorStrategy;
 import org.testng.annotations.DataProvider;
@@ -27,28 +28,28 @@ public class StringsTest {
 
     @Test(dataProvider = "buildStrategy")
     public void string(StringGeneratorStrategy buildStrategy) {
-        String def = GenerateObject.forType(String.class)
+        String def = new ObjectBuilder()
                 .onWrapperProperty().setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT)
                 .onString().setGeneratorStrategy(buildStrategy)
-                .build();
-        String size5 = GenerateObject.forType(String.class)
+                .build(String.class);
+        String size5 = new ObjectBuilder()
                 .onString().setGeneratorStrategy(buildStrategy).setSize(5)
                 .onWrapper().setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT)
-                .build();
-        String numeric = GenerateObject.forType(String.class)
+                .build(String.class);
+        String numeric = new ObjectBuilder()
                 .onString().setGeneratorStrategy(buildStrategy).setNumeric(true)
-                .build();
-        String alpha = GenerateObject.forType(String.class)
+                .build(String.class);
+        String alpha = new ObjectBuilder()
                 .onString().setGeneratorStrategy(buildStrategy).setAlpha(true)
-                .build();
-        String alphaLower = GenerateObject.forType(String.class)
+                .build(String.class);
+        String alphaLower = new ObjectBuilder()
                 .onString().setGeneratorStrategy(buildStrategy).setAttributes(true, true, false)
                 .onWrapper().setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT)
-                .build();
-        String alphaNumericLower = GenerateObject.forType(String.class)
+                .build(String.class);
+        String alphaNumericLower = new ObjectBuilder()
                 .onString().setGeneratorStrategy(buildStrategy).setLower(true)
                 .onWrapper().setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT)
-                .build();
+                .build(String.class);
 
         switch (buildStrategy) {
             case VALUE:

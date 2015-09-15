@@ -7,30 +7,22 @@ import org.biins.objectbuilder.types.wrapper.WrapperTypeRegistry;
 /**
  * @author Martin Janys
  */
-public class WrapperObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
+public class WrapperObjectBuilder extends AbstractBuilder implements Builder {
 
     protected WrapperGeneratorStrategy wrapperStrategy = WrapperGeneratorStrategy.DEFAULT;
 
-    protected WrapperObjectBuilder(Class<T> cls) {
-        super(cls);
-    }
-
-    static <T> WrapperObjectBuilder<T> forType(Class<T> cls) {
-        return new WrapperObjectBuilder<T>(cls);
-    }
-
-    public WrapperObjectBuilder<T> setWrapperStrategy(WrapperGeneratorStrategy wrapper) {
+    public WrapperObjectBuilder setWrapperStrategy(WrapperGeneratorStrategy wrapper) {
         this.wrapperStrategy = wrapper;
         return this;
     }
 
     @Override
-    public T build() {
-        return buildPrimitiveWrapper();
+    public <T> T build(Class<T> type) {
+        return buildPrimitiveWrapper(type);
     }
 
-    public T buildPrimitiveWrapper() {
-        WrapperType<T> wrapperType = WrapperTypeRegistry.get(cls);
+    public <T> T buildPrimitiveWrapper(Class<T> type) {
+        WrapperType<T> wrapperType = WrapperTypeRegistry.get(type);
 
         switch (wrapperStrategy) {
             case NULL:

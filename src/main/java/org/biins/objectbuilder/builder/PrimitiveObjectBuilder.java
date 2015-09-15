@@ -7,30 +7,22 @@ import org.biins.objectbuilder.types.primitive.PrimitiveTypeRegistry;
 /**
  * @author Martin Janys
  */
-public class PrimitiveObjectBuilder<T> extends AbstractBuilder<T> implements Builder<T> {
+public class PrimitiveObjectBuilder extends AbstractBuilder implements Builder {
 
     protected PrimitiveGeneratorStrategy primitiveStrategy = PrimitiveGeneratorStrategy.DEFAULT;
 
-    protected PrimitiveObjectBuilder(Class<T> cls) {
-        super(cls);
-    }
-
-    static <T> PrimitiveObjectBuilder<T> forType(Class<T> cls) {
-        return new PrimitiveObjectBuilder<T>(cls);
-    }
-
-    public PrimitiveObjectBuilder<T> setPrimitiveStrategy(PrimitiveGeneratorStrategy primitiveStrategy) {
+    public PrimitiveObjectBuilder setPrimitiveStrategy(PrimitiveGeneratorStrategy primitiveStrategy) {
         this.primitiveStrategy = primitiveStrategy;
         return this;
     }
 
     @Override
-    public T build() {
-        return buildPrimitive();
+    public <T> T build(Class<T> type) {
+        return buildPrimitive(type);
     }
 
-    public T buildPrimitive() {
-        PrimitiveType<T> primitiveType = PrimitiveTypeRegistry.get(cls);
+    public <T> T buildPrimitive(Class<T> type) {
+        PrimitiveType<T> primitiveType = PrimitiveTypeRegistry.get(type);
         switch (primitiveStrategy) {
             case MIN:
                 return primitiveType.getMinValue();

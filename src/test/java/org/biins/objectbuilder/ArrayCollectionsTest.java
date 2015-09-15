@@ -1,5 +1,6 @@
 package org.biins.objectbuilder;
 
+import org.biins.objectbuilder.builder.ObjectBuilder;
 import org.biins.objectbuilder.builder.strategy.ArrayGeneratorStrategy;
 import org.biins.objectbuilder.builder.strategy.CollectionGeneratorStrategy;
 import org.biins.objectbuilder.types.Types;
@@ -30,15 +31,15 @@ public class ArrayCollectionsTest {
     @SuppressWarnings("unchecked")
     @Test(dataProvider = "buildStrategy")
     public void arrayOfCollections(CollectionGeneratorStrategy collectionStrategy, ArrayGeneratorStrategy arrayStrategy) {
-        List<Integer>[] arrayOfLists = GenerateObject.forType(List[].class)
+        List<Integer>[] arrayOfLists = new ObjectBuilder()
                 .onCollection().setGeneratorStrategy(collectionStrategy).setSize(1).of(Types.typeOf(Integer.class))
                 .onArray().setGeneratorStrategy(arrayStrategy).setSize(2)
-                .build();
+                .build(List[].class);
 
-        List<String[]> listOfArrays = GenerateObject.forType(List.class)
+        List<String[]> listOfArrays = new ObjectBuilder()
                 .onCollection().setGeneratorStrategy(collectionStrategy).setSize(1).of(Types.typeOf(String[].class))
                 .onArray().setGeneratorStrategy(arrayStrategy).setSize(2)
-                .build();
+                .build(List.class);
 
         switch (collectionStrategy) {
             case DEFAULT:

@@ -9,17 +9,13 @@ import java.util.Arrays;
  * @author Martin Janys
  */
 @SuppressWarnings("unchecked")
-public abstract class AbstractCompositeBuilder<T, BUILDER> extends AbstractBuilder<T> {
+public abstract class AbstractCompositeBuilder<BUILDER> extends AbstractBuilder {
 
     protected PrimitiveGeneratorStrategy primitiveStrategy = PrimitiveGeneratorStrategy.DEFAULT;
     protected WrapperGeneratorStrategy wrapperStrategy = WrapperGeneratorStrategy.DEFAULT;
     protected StringGeneratorStrategy stringGeneratorStrategy = StringGeneratorStrategy.DEFAULT;
     protected CollectionGeneratorStrategy collectionGeneratorStrategy = CollectionGeneratorStrategy.DEFAULT;
     protected ArrayGeneratorStrategy arrayStrategy = ArrayGeneratorStrategy.DEFAULT;
-
-    protected AbstractCompositeBuilder(Class<T> cls) {
-        super(cls);
-    }
 
     public BUILDER setGeneratorStrategy(CollectionGeneratorStrategy collectionGeneratorStrategy) {
         this.collectionGeneratorStrategy = collectionGeneratorStrategy;
@@ -47,7 +43,7 @@ public abstract class AbstractCompositeBuilder<T, BUILDER> extends AbstractBuild
     }
 
     protected Object createCompositeObject(Class<?> type, int ... size) {
-        return ObjectBuilder.forType(type)
+        return new ObjectBuilder()
                 .onArray()
                     .setGeneratorStrategy(primitiveStrategy)
                     .setGeneratorStrategy(wrapperStrategy)
@@ -62,7 +58,7 @@ public abstract class AbstractCompositeBuilder<T, BUILDER> extends AbstractBuild
                     .setGeneratorStrategy(collectionGeneratorStrategy)
                     .setGeneratorStrategy(arrayStrategy)
                     .setSize(decreaseDimension(size))
-                .build();
+                .build(type);
     }
 
     protected int[] decreaseDimension(int[] size) {
@@ -79,11 +75,11 @@ public abstract class AbstractCompositeBuilder<T, BUILDER> extends AbstractBuild
     }
 
     protected Object createRawObject(Class<?> type) {
-        return ObjectBuilder.forType(type)
+        return new ObjectBuilder()
                 .onPrimitiveProperty().setGeneratorStrategy(primitiveStrategy)
                 .onWrapper().setGeneratorStrategy(wrapperStrategy)
                 .onString().setGeneratorStrategy(stringGeneratorStrategy)
-                .build();
+                .build(type);
     }
 
 }

@@ -1,5 +1,6 @@
 package org.biins.objectbuilder;
 
+import org.biins.objectbuilder.builder.ObjectBuilder;
 import org.biins.objectbuilder.builder.strategy.PrimitiveGeneratorStrategy;
 import org.biins.objectbuilder.builder.strategy.WrapperGeneratorStrategy;
 import org.testng.annotations.DataProvider;
@@ -27,32 +28,32 @@ public class PrimitiveWrappersTest {
 
     @Test(dataProvider = "buildStrategy")
     public void wrapperObject(WrapperGeneratorStrategy buildStrategy) {
-        Byte b = GenerateObject.forType(Byte.class)
+        Byte b = new ObjectBuilder()
                 .onPrimitiveProperty().setGeneratorStrategy(PrimitiveGeneratorStrategy.DEFAULT)
                 .onWrapper().setGeneratorStrategy(buildStrategy)
-                .build();
-        Short s = GenerateObject.forType(Short.class)
+                .build(Byte.class);
+        Short s = new ObjectBuilder()
                 .onPrimitiveProperty().setGeneratorStrategy(PrimitiveGeneratorStrategy.DEFAULT)
                 .onWrapper().setGeneratorStrategy(buildStrategy)
-                .build();
-        Integer i = GenerateObject.forType(Integer.class)
+                .build(Short.class);
+        Integer i = new ObjectBuilder()
                 .onWrapperProperty().setGeneratorStrategy(buildStrategy)
-                .build();
-        Long l = GenerateObject.forType(Long.class)
+                .build(Integer.class);
+        Long l = new ObjectBuilder()
                 .onWrapperProperty().setGeneratorStrategy(buildStrategy)
-                .build();
-        Float f = GenerateObject.forType(Float.class)
+                .build(Long.class);
+        Float f = new ObjectBuilder()
                 .onWrapperProperty().setGeneratorStrategy(buildStrategy)
-                .build();
-        Double d = GenerateObject.forType(Double.class)
+                .build(Float.class);
+        Double d = new ObjectBuilder()
                 .onWrapperProperty().setGeneratorStrategy(buildStrategy)
-                .build();
-        Character c = GenerateObject.forType(Character.class)
+                .build(Double.class);
+        Character c = new ObjectBuilder()
                 .onWrapperProperty().setGeneratorStrategy(buildStrategy)
-                .build();
-        Boolean bool = GenerateObject.forType(Boolean.class)
+                .build(Character.class);
+        Boolean bool = new ObjectBuilder()
                 .onWrapperProperty().setGeneratorStrategy(buildStrategy)
-                .build();
+                .build(Boolean.class);
 
         switch (buildStrategy) {
             case DEFAULT:

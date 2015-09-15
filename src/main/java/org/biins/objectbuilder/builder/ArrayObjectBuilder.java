@@ -10,19 +10,11 @@ import java.util.Arrays;
  * @author Martin Janys
  */
 @SuppressWarnings("unchecked")
-public class ArrayObjectBuilder<T> extends AbstractCompositeBuilder<T, ArrayObjectBuilder> implements Builder<T> {
+public class ArrayObjectBuilder extends AbstractCompositeBuilder<ArrayObjectBuilder> implements Builder {
 
     protected int[] size = new int[]{0};
 
-    protected ArrayObjectBuilder(Class<T> cls) {
-        super(cls);
-    }
-
-    static <T> ArrayObjectBuilder<T> forType(Class<T> cls) {
-        return new ArrayObjectBuilder<T>(cls);
-    }
-
-    public ArrayObjectBuilder<T> setSize(int ... size) {
+    public ArrayObjectBuilder setSize(int ... size) {
         this.size = size;
         validateSize();
         return this;
@@ -37,16 +29,16 @@ public class ArrayObjectBuilder<T> extends AbstractCompositeBuilder<T, ArrayObje
     }
 
     @Override
-    public T build() {
-        return buildArray();
+    public <T> T build(Class<T> type) {
+        return buildArray(type);
     }
 
-    public T buildArray() {
-        ArrayType<T> arrayType = ArrayTypeRegistry.get(cls);
+    public <T> T buildArray(Class<T> type) {
+        ArrayType<T> arrayType = ArrayTypeRegistry.get(type);
         return buildArray(arrayType, size);
     }
 
-    private T buildArray(ArrayType<T> arrayType, int ... size) {
+    private <T> T buildArray(ArrayType<T> arrayType, int ... size) {
         switch (arrayStrategy) {
             case NULL:
                 return null;
@@ -58,7 +50,7 @@ public class ArrayObjectBuilder<T> extends AbstractCompositeBuilder<T, ArrayObje
         }
     }
 
-    private T buildArrayInternal(ArrayType<T> arrayType, int ... sizes) {
+    private <T> T buildArrayInternal(ArrayType<T> arrayType, int ... sizes) {
         int arraySize = countSize(sizes);
 
         Class<?> componentType = arrayType.getComponentType();

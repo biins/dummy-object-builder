@@ -5,10 +5,10 @@ import java.util.List;
 /**
  * @author Martin Janys
  */
-public interface Builder<T> {
+public interface Builder {
 
-    T build();
+    <T> T build(Class<T> type);
 
-    List<T> build(int count);
+    <T> List<T> build(Class<T> type, int count);
     
 }
