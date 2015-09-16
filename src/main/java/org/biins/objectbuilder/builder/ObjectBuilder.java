@@ -184,33 +184,12 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
         private final org.biins.objectbuilder.builder.ArrayObjectBuilder builder;
 
         protected ArrayObjectBuilder() {
-            this.builder = new org.biins.objectbuilder.builder.ArrayObjectBuilder();
+            this.builder = new org.biins.objectbuilder.builder.ArrayObjectBuilder(ObjectBuilder.this);
         }
 
         @Override
         public <T> T build(Class<T> type) {
             return ObjectBuilder.this.build(type);
-        }
-
-
-        public ArrayObjectBuilder setGeneratorStrategy(PrimitiveGeneratorStrategy strategy) {
-            builder.setGeneratorStrategy(strategy);
-            return this;
-        }
-
-        public ArrayObjectBuilder setGeneratorStrategy(WrapperGeneratorStrategy strategy) {
-            builder.setGeneratorStrategy(strategy);
-            return this;
-        }
-
-        public ArrayObjectBuilder setGeneratorStrategy(StringGeneratorStrategy strategy) {
-            builder.setGeneratorStrategy(strategy);
-            return this;
-        }
-
-        public ArrayObjectBuilder setGeneratorStrategy(CollectionGeneratorStrategy strategy) {
-            builder.setGeneratorStrategy(strategy);
-            return this;
         }
 
         public ArrayObjectBuilder setGeneratorStrategy(ArrayGeneratorStrategy strategy) {
@@ -223,9 +202,12 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
             return this;
         }
 
-        @SuppressWarnings("unchecked")
-        public <T> T buildArray(Class<T> type) {
-            return (T) builder.buildArray(type);
+        <T> T buildArray(Class<T> type) {
+            return builder.buildArray(type);
+        }
+
+        <T> T buildArray(Class<T> type, int ... size) {
+            return builder.buildArray(type, size);
         }
     }
 
@@ -234,7 +216,7 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
         private final org.biins.objectbuilder.builder.CollectionObjectBuilder builder;
 
         protected CollectionObjectBuilder() {
-            this.builder = new org.biins.objectbuilder.builder.CollectionObjectBuilder();
+            this.builder = new org.biins.objectbuilder.builder.CollectionObjectBuilder(ObjectBuilder.this);
         }
 
         public CollectionObjectBuilder of(Types<?> types) {
@@ -247,28 +229,7 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
             return this;
         }
 
-
-        public CollectionObjectBuilder setGeneratorStrategy(PrimitiveGeneratorStrategy strategy) {
-            builder.setGeneratorStrategy(strategy);
-            return this;
-        }
-
-        public CollectionObjectBuilder setGeneratorStrategy(WrapperGeneratorStrategy strategy) {
-            builder.setGeneratorStrategy(strategy);
-            return this;
-        }
-
-        public CollectionObjectBuilder setGeneratorStrategy(StringGeneratorStrategy strategy) {
-            builder.setGeneratorStrategy(strategy);
-            return this;
-        }
-
         public CollectionObjectBuilder setGeneratorStrategy(CollectionGeneratorStrategy strategy) {
-            builder.setGeneratorStrategy(strategy);
-            return this;
-        }
-
-        public CollectionObjectBuilder setGeneratorStrategy(ArrayGeneratorStrategy strategy) {
             builder.setGeneratorStrategy(strategy);
             return this;
         }
@@ -278,9 +239,12 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
             return ObjectBuilder.this.build(type);
         }
 
-        @SuppressWarnings("unchecked")
-        public <T> T buildCollection(Class<T> type) {
+        <T> T buildCollection(Class<T> type) {
             return builder.buildCollection(type);
+        }
+
+        <T> T buildCollection(Class<T> type, Types<?> elementType, int ... size) {
+            return builder.buildCollection(type, elementType, size);
         }
     }
 

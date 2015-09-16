@@ -1,6 +1,6 @@
 package org.biins.objectbuilder.builder;
 
-import org.biins.objectbuilder.builder.strategy.*;
+import org.biins.objectbuilder.types.Types;
 import org.biins.objectbuilder.util.ClassUtils;
 
 import java.util.Arrays;
@@ -9,77 +9,29 @@ import java.util.Arrays;
  * @author Martin Janys
  */
 @SuppressWarnings("unchecked")
-public abstract class AbstractCompositeBuilder<BUILDER> extends AbstractBuilder {
+public abstract class AbstractCompositeBuilder extends AbstractBuilder {
 
-    protected PrimitiveGeneratorStrategy primitiveStrategy = PrimitiveGeneratorStrategy.DEFAULT;
-    protected WrapperGeneratorStrategy wrapperStrategy = WrapperGeneratorStrategy.DEFAULT;
-    protected StringGeneratorStrategy stringGeneratorStrategy = StringGeneratorStrategy.DEFAULT;
-    protected CollectionGeneratorStrategy collectionGeneratorStrategy = CollectionGeneratorStrategy.DEFAULT;
-    protected ArrayGeneratorStrategy arrayStrategy = ArrayGeneratorStrategy.DEFAULT;
+    private ObjectBuilder objectBuilder;
 
-    public BUILDER setGeneratorStrategy(CollectionGeneratorStrategy collectionGeneratorStrategy) {
-        this.collectionGeneratorStrategy = collectionGeneratorStrategy;
-        return (BUILDER) this;
+    public AbstractCompositeBuilder(ObjectBuilder objectBuilder) {
+        this.objectBuilder = objectBuilder;
     }
 
-    public BUILDER setGeneratorStrategy(ArrayGeneratorStrategy arrayStrategy) {
-        this.arrayStrategy = arrayStrategy;
-        return (BUILDER) this;
-    }
-
-    public BUILDER setGeneratorStrategy(PrimitiveGeneratorStrategy primitiveStrategy) {
-        this.primitiveStrategy = primitiveStrategy;
-        return (BUILDER) this;
-    }
-
-    public BUILDER setGeneratorStrategy(WrapperGeneratorStrategy wrapperStrategy) {
-        this.wrapperStrategy = wrapperStrategy;
-        return (BUILDER) this;
-    }
-
-    public BUILDER setGeneratorStrategy(StringGeneratorStrategy stringGeneratorStrategy) {
-        this.stringGeneratorStrategy = stringGeneratorStrategy;
-        return (BUILDER) this;
-    }
-
-    protected Object createCompositeObject(Class<?> type, int ... size) {
-        return new ObjectBuilder()
-                .onArray()
-                    .setGeneratorStrategy(primitiveStrategy)
-                    .setGeneratorStrategy(wrapperStrategy)
-                    .setGeneratorStrategy(stringGeneratorStrategy)
-                    .setGeneratorStrategy(collectionGeneratorStrategy)
-                    .setGeneratorStrategy(arrayStrategy)
-                .setSize(decreaseDimension(size))
-                .onCollection()
-                    .setGeneratorStrategy(primitiveStrategy)
-                    .setGeneratorStrategy(wrapperStrategy)
-                    .setGeneratorStrategy(stringGeneratorStrategy)
-                    .setGeneratorStrategy(collectionGeneratorStrategy)
-                    .setGeneratorStrategy(arrayStrategy)
-                    .setSize(decreaseDimension(size))
-                .build(type);
+    protected Object createCompositeObject(Types<?> types, int ... size) {
+        Class<?> type = types.getType();
+        if (ClassUtils.isArray(type)) {
+            return objectBuilder.onArray().buildArray(type, size);
+        }
+        if (ClassUtils.isCollection(type)) {
+            return objectBuilder.onCollection().buildCollection(type, types.next(), size);
+        }
+        else {
+            return objectBuilder.build(type);
+        }
     }
 
     protected int[] decreaseDimension(int[] size) {
         return size.length > 1 ? Arrays.copyOfRange(size, 1, size.length) : new int[]{0};
-    }
-
-    protected Object createObject(Class<?> type, int ... size) {
-        if (ClassUtils.isComposite(type)) {
-            return createCompositeObject(type, size);
-        }
-        else {
-            return createRawObject(type);
-        }
-    }
-
-    protected Object createRawObject(Class<?> type) {
-        return new ObjectBuilder()
-                .onPrimitiveProperty().setGeneratorStrategy(primitiveStrategy)
-                .onWrapper().setGeneratorStrategy(wrapperStrategy)
-                .onString().setGeneratorStrategy(stringGeneratorStrategy)
-                .build(type);
     }
 
 }

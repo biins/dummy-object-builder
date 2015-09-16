@@ -181,29 +181,44 @@ public class ArraysTest {
     @Test(dataProvider = "buildStrategyForValue")
     public void arrayWrapperObjectValue(ArrayGeneratorStrategy buildStrategy, PrimitiveGeneratorStrategy primitiveGeneratorStrategy, WrapperGeneratorStrategy wrapperGeneratorStrategy) {
         Byte[] b = new ObjectBuilder()
-                .onArray().setGeneratorStrategy(buildStrategy).setGeneratorStrategy(primitiveGeneratorStrategy).setGeneratorStrategy(wrapperGeneratorStrategy)
-                .setSize(1)
+                .onArray().setGeneratorStrategy(buildStrategy).setSize(1)
+                .onPrimitive().setGeneratorStrategy(primitiveGeneratorStrategy)
+                .onWrapper().setGeneratorStrategy(wrapperGeneratorStrategy)
                 .build(Byte[].class);
         short[] s = new ObjectBuilder()
-                .onArray().setGeneratorStrategy(buildStrategy).setGeneratorStrategy(primitiveGeneratorStrategy).setGeneratorStrategy(wrapperGeneratorStrategy).setSize(2)
+                .onArray().setGeneratorStrategy(buildStrategy).setSize(2)
+                .onPrimitive().setGeneratorStrategy(primitiveGeneratorStrategy)
+                .onWrapper().setGeneratorStrategy(wrapperGeneratorStrategy)
                 .build(short[].class);
         Integer[] i = new ObjectBuilder()
-                .onArray().setGeneratorStrategy(buildStrategy).setGeneratorStrategy(primitiveGeneratorStrategy).setGeneratorStrategy(wrapperGeneratorStrategy).setSize(3)
+                .onArray().setGeneratorStrategy(buildStrategy).setSize(3)
+                .onPrimitive().setGeneratorStrategy(primitiveGeneratorStrategy)
+                .onWrapper().setGeneratorStrategy(wrapperGeneratorStrategy)
                 .build(Integer[].class);
         long[] l = new ObjectBuilder()
-                .onArray().setGeneratorStrategy(buildStrategy).setGeneratorStrategy(primitiveGeneratorStrategy).setGeneratorStrategy(wrapperGeneratorStrategy).setSize(2)
+                .onArray().setGeneratorStrategy(buildStrategy).setSize(2)
+                .onPrimitive().setGeneratorStrategy(primitiveGeneratorStrategy)
+                .onWrapper().setGeneratorStrategy(wrapperGeneratorStrategy)
                 .build(long[].class);
         Float[] f = new ObjectBuilder()
-                .onArray().setGeneratorStrategy(buildStrategy).setGeneratorStrategy(primitiveGeneratorStrategy).setGeneratorStrategy(wrapperGeneratorStrategy).setSize(1)
+                .onArray().setGeneratorStrategy(buildStrategy).setSize(1)
+                .onPrimitive(primitiveGeneratorStrategy)
+                .onWrapper(wrapperGeneratorStrategy)
                 .build(Float[].class);
         double[] d = new ObjectBuilder()
-                .onArray().setGeneratorStrategy(buildStrategy).setGeneratorStrategy(primitiveGeneratorStrategy).setGeneratorStrategy(wrapperGeneratorStrategy).setSize(0)
+                .onArray().setGeneratorStrategy(buildStrategy).setSize(0)
+                .onPrimitive(primitiveGeneratorStrategy)
+                .onWrapper(wrapperGeneratorStrategy)
                 .build(double[].class);
         Character[] c = new ObjectBuilder()
-                .onArray().setGeneratorStrategy(buildStrategy).setGeneratorStrategy(primitiveGeneratorStrategy).setGeneratorStrategy(wrapperGeneratorStrategy).setSize(1)
+                .onArray().setGeneratorStrategy(buildStrategy).setSize(1)
+                .onPrimitive(primitiveGeneratorStrategy)
+                .onWrapper(wrapperGeneratorStrategy)
                 .build(Character[].class);
         boolean bool[] = new ObjectBuilder()
-                .onArray().setGeneratorStrategy(buildStrategy).setGeneratorStrategy(primitiveGeneratorStrategy).setGeneratorStrategy(wrapperGeneratorStrategy).setSize(2)
+                .onArray().setGeneratorStrategy(buildStrategy).setSize(2)
+                .onPrimitive(primitiveGeneratorStrategy)
+                .onWrapper(wrapperGeneratorStrategy)
                 .build(boolean[].class);
 
         switch (buildStrategy) {
@@ -255,39 +270,46 @@ public class ArraysTest {
     @Test(dataProvider = "buildStrategyForValue")
     public void arrayMultidimensional(ArrayGeneratorStrategy buildStrategy, PrimitiveGeneratorStrategy primitiveGeneratorStrategy, WrapperGeneratorStrategy wrapperGeneratorStrategy) {
         Byte[][] b = new ObjectBuilder()
-                .onArray().setGeneratorStrategy(buildStrategy).setGeneratorStrategy(primitiveGeneratorStrategy).setGeneratorStrategy(wrapperGeneratorStrategy)
-                .setSize(0)
+                .onArray().setGeneratorStrategy(buildStrategy).setSize(0)
+                .onPrimitive(primitiveGeneratorStrategy)
+                .onWrapper(wrapperGeneratorStrategy)
                 .build(Byte[][].class);
         assertTrue(Arrays.equals(b, new Byte[0][]));
 
         short[][] s = new ObjectBuilder()
-                .onArray().setGeneratorStrategy(buildStrategy).setGeneratorStrategy(primitiveGeneratorStrategy).setGeneratorStrategy(wrapperGeneratorStrategy)
-                .setSize(2)
+                .onArray().setGeneratorStrategy(buildStrategy).setSize(2)
+                .onPrimitive(primitiveGeneratorStrategy)
+                .onWrapper(wrapperGeneratorStrategy)
                 .build(short[][].class);
 
         Integer[][] i = new ObjectBuilder()
-                .onArray().setGeneratorStrategy(buildStrategy).setGeneratorStrategy(primitiveGeneratorStrategy).setGeneratorStrategy(wrapperGeneratorStrategy)
-                .setSize(2, 1)
+                .onArray().setGeneratorStrategy(buildStrategy).setSize(2, 1)
+                .onPrimitive(primitiveGeneratorStrategy)
+                .onWrapper(wrapperGeneratorStrategy)
                 .build(Integer[][].class);
 
         long[][][] l = new ObjectBuilder()
-                .onArray().setGeneratorStrategy(buildStrategy).setGeneratorStrategy(primitiveGeneratorStrategy).setGeneratorStrategy(wrapperGeneratorStrategy)
-                .setSize(3, 2, 1)
+                .onArray().setGeneratorStrategy(buildStrategy).setSize(3, 2, 1)
+                .onPrimitive(primitiveGeneratorStrategy)
+                .onWrapper(wrapperGeneratorStrategy)
                 .build(long[][][].class);
 
         Float[][][] f = new ObjectBuilder()
-                .onArray().setGeneratorStrategy(buildStrategy).setGeneratorStrategy(primitiveGeneratorStrategy).setGeneratorStrategy(wrapperGeneratorStrategy)
-                .setSize(3)
+                .onArray().setGeneratorStrategy(buildStrategy).setSize(3)
+                .onPrimitive(primitiveGeneratorStrategy)
+                .onWrapper(wrapperGeneratorStrategy)
                 .build(Float[][][].class);
 
         double[][][] d = new ObjectBuilder()
-                .onArray().setGeneratorStrategy(buildStrategy).setGeneratorStrategy(primitiveGeneratorStrategy).setGeneratorStrategy(wrapperGeneratorStrategy)
-                .setSize(3, 0, 1)
+                .onArray().setGeneratorStrategy(buildStrategy).setSize(3, 0, 1)
+                .onPrimitive(primitiveGeneratorStrategy)
+                .onWrapper(wrapperGeneratorStrategy)
                 .build(double[][][].class);
 
         Character[][][][] c = new ObjectBuilder()
-                .onArray().setGeneratorStrategy(buildStrategy).setGeneratorStrategy(primitiveGeneratorStrategy).setGeneratorStrategy(wrapperGeneratorStrategy)
-                .setSize(1, 1, 1, 1)
+                .onArray().setGeneratorStrategy(buildStrategy).setSize(1, 1, 1, 1)
+                .onPrimitive(primitiveGeneratorStrategy)
+                .onWrapper(wrapperGeneratorStrategy)
                 .build(Character[][][][].class);
 
         // asserts
