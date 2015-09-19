@@ -32,4 +32,9 @@ public class ClassUtils {
     public static boolean isComposite(Class<?> cls) {
         return isArray(cls) || isCollection(cls);
     }
+
+    public static boolean isSameCompositeType(Class<?> type1, Class<?> type2) {
+        return (isArray(type1) && isArray(type2)) ||
+                (isCollection(type1) && isCollection(type2));
+    }
 }

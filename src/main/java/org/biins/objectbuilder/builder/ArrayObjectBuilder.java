@@ -4,6 +4,7 @@ import org.biins.objectbuilder.builder.strategy.ArrayGeneratorStrategy;
 import org.biins.objectbuilder.types.Types;
 import org.biins.objectbuilder.types.array.ArrayType;
 import org.biins.objectbuilder.types.array.ArrayTypeRegistry;
+import org.biins.objectbuilder.util.ClassUtils;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -19,6 +20,7 @@ public class ArrayObjectBuilder extends AbstractCompositeBuilder implements Buil
 
     public ArrayObjectBuilder(ObjectBuilder objectBuilder) {
         super(objectBuilder);
+        array = true;
     }
 
     public ArrayObjectBuilder setSize(int ... size) {
@@ -79,7 +81,13 @@ public class ArrayObjectBuilder extends AbstractCompositeBuilder implements Buil
     private Object fillArray(Object array, Class<?> componentType, int ... size) {
         int maxIndex = countSize(size, 0);
         for (int i = 0; i < maxIndex; i++) {
-            Object value = createCompositeObject(Types.typeOf(componentType), decreaseDimension(size));
+            Object value;
+            if (ClassUtils.isSameCompositeType(array.getClass(), componentType)) {
+                value = createCompositeObject(Types.typeOf(componentType), decreaseDimension(size));
+            }
+            else {
+                value = createCompositeObject(Types.typeOf(componentType));
+            }
             Array.set(array, i, value);
         }
 

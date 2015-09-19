@@ -243,6 +243,10 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
             return builder.buildCollection(type);
         }
 
+        <T> T buildCollection(Class<T> type, Types<?> elementType) {
+            return builder.buildCollection(type, elementType);
+        }
+
         <T> T buildCollection(Class<T> type, Types<?> elementType, int ... size) {
             return builder.buildCollection(type, elementType, size);
         }

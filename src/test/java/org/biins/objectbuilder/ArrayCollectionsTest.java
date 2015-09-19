@@ -3,6 +3,7 @@ package org.biins.objectbuilder;
 import org.biins.objectbuilder.builder.ObjectBuilder;
 import org.biins.objectbuilder.builder.strategy.ArrayGeneratorStrategy;
 import org.biins.objectbuilder.builder.strategy.CollectionGeneratorStrategy;
+import org.biins.objectbuilder.builder.strategy.StringGeneratorStrategy;
 import org.biins.objectbuilder.types.Types;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -34,6 +35,7 @@ public class ArrayCollectionsTest {
         List<Integer>[] arrayOfLists = new ObjectBuilder()
                 .onCollection().setGeneratorStrategy(collectionStrategy).setSize(1).of(Types.typeOf(Integer.class))
                 .onArray().setGeneratorStrategy(arrayStrategy).setSize(2)
+                .onString(StringGeneratorStrategy.EMPTY)
                 .build(List[].class);
 
         List<String[]> listOfArrays = new ObjectBuilder()
@@ -44,17 +46,37 @@ public class ArrayCollectionsTest {
         switch (collectionStrategy) {
             case DEFAULT:
                 assertEquals(arrayOfLists, new List[]{});
+                assertEquals(listOfArrays, Collections.emptyList());
                 break;
             case VALUE:
                 assertEquals(arrayOfLists, new List[]{
                         Collections.singletonList(0),
                         Collections.singletonList(0)
                 });
+                assertEquals(listOfArrays, Collections.singletonList(new String[]{"", ""}));
                 break;
             case NULL:
                 assertNull(arrayOfLists);
                 assertNull(listOfArrays);
                 break;
         }
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    @SuppressWarnings("unchecked")
+    public void  cyclicGenerating() {
+        List<List<Boolean>[][]> listOfListOfArrays = new ObjectBuilder()
+                .onCollection().setGeneratorStrategy(CollectionGeneratorStrategy.VALUE).setSize(2).of(Types.typeOf(List[][].class).of(Boolean.class))
+                .onArray().setGeneratorStrategy(ArrayGeneratorStrategy.VALUE).setSize(3, 2)
+                .build(List.class);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    @SuppressWarnings("unchecked")
+    public void  cyclicGenerating2() {
+        List[][] arrayOfArrayOfList = new ObjectBuilder()
+                .onCollection().setGeneratorStrategy(CollectionGeneratorStrategy.VALUE).setSize(2).of(Types.typeOf(List[][].class).of(Boolean.class))
+                .onArray().setGeneratorStrategy(ArrayGeneratorStrategy.VALUE).setSize(3, 2)
+                .build(List[][].class);
     }
 }

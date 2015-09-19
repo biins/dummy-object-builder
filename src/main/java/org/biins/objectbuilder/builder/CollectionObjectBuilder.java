@@ -19,12 +19,12 @@ public class CollectionObjectBuilder extends AbstractCompositeBuilder implements
 
     private CollectionGeneratorStrategy collectionGeneratorStrategy;
     private int[] size = new int[]{0};
-    private int currentDimension;
 
     private Types<?> elementType;
 
     public CollectionObjectBuilder(ObjectBuilder objectBuilder) {
         super(objectBuilder);
+        collection = true;
     }
 
     public CollectionObjectBuilder setSize(int ... size) {
@@ -61,6 +61,11 @@ public class CollectionObjectBuilder extends AbstractCompositeBuilder implements
         return buildCollection(collectionType, elementType, size);
     }
 
+    public <T> T buildCollection(Class<T> type, Types<?> elementType) {
+        CollectionType<T> collectionType = CollectionTypeRegistry.get(type);
+        return buildCollection(collectionType, elementType, size);
+    }
+
     public  <T> T buildCollection(Class<T> type, Types elementType, int ... size) {
         CollectionType<T> collectionType = CollectionTypeRegistry.get(type);
         return buildCollection(collectionType, elementType, size);
@@ -71,30 +76,37 @@ public class CollectionObjectBuilder extends AbstractCompositeBuilder implements
             case NULL:
                 return null;
             case VALUE:
-                return buildCollectionInternal(collectionType, elementType, size);
+                return buildCollectionInternal(collectionType.getType(), elementType, size);
             case SINGLETON:
-                return buildCollectionInternal(collectionType, elementType);
+                this.size = new int[]{1};
+                return buildCollectionInternal(collectionType.getType(), elementType);
             case DEFAULT:
             default:
                 return collectionType.getDefaultValue();
         }
     }
 
-    private <T> T buildCollectionInternal(CollectionType<T> collectionType, Types elementType, int ... sizes) {
-        return buildCollectionInternal(collectionType.getType(), elementType, sizes);
+    private <T> T buildCollectionInternal(Class<T> collectionType, Types elementType) {
+        return buildCollectionInternal(collectionType, elementType, size);
     }
 
-    private <T> T buildCollectionInternal(Class<T> collectionType, Types elementType, int ... sizes) {
-        Collection collection = createCollection(collectionType, elementType, sizes);
+    private <T> T buildCollectionInternal(Class<T> collectionType, Types elementType, int ... size) {
+        Collection collection = createCollection(collectionType, elementType, size);
         return (T) collection;
     }
 
-    private Collection createCollection(Class<?> collectionType, Types elementType, int[] sizes) {
-        int size = countSize(sizes, currentDimension);
-        List list = new ArrayList(size);
+    private Collection createCollection(Class<?> collectionType, Types elementType, int ... size) {
+        int collectionSize = countSize(size, 0);
+        List list = new ArrayList(collectionSize);
         if (elementType != null) {
-            for (int i = 0; i < size; i++) {
-                Object value = createCompositeObject(elementType, countSize(sizes, currentDimension++));
+            for (int i = 0; i < collectionSize; i++) {
+                Object value;
+                if (ClassUtils.isSameCompositeType(collectionType, elementType.getType())) {
+                    value = createCompositeObject(elementType, decreaseDimension(size));
+                }
+                else {
+                    value = createCompositeObject(elementType);
+                }
                 list.add(i, value);
             }
         }
