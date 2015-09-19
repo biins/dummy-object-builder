@@ -17,14 +17,13 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public class CollectionObjectBuilder extends AbstractCompositeBuilder implements Builder {
 
-    private CollectionGeneratorStrategy collectionGeneratorStrategy;
+    private CollectionGeneratorStrategy collectionGeneratorStrategy = CollectionGeneratorStrategy.DEFAULT;
     private int[] size = new int[]{0};
 
     private Types<?> elementType;
 
     public CollectionObjectBuilder(ObjectBuilder objectBuilder) {
         super(objectBuilder);
-        collection = true;
     }
 
     public CollectionObjectBuilder setSize(int ... size) {

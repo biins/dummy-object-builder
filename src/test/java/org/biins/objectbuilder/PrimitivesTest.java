@@ -26,28 +26,28 @@ public class PrimitivesTest {
     @Test(dataProvider = "buildStrategy")
     public void primitiveObject(PrimitiveGeneratorStrategy buildStrategy) {
         byte b = new ObjectBuilder()
-                .onPrimitiveProperty().setGeneratorStrategy(buildStrategy)
+                .onPrimitive().setGeneratorStrategy(buildStrategy)
                 .build(byte.class);
         short s = new ObjectBuilder()
-                .onPrimitiveProperty().setGeneratorStrategy(buildStrategy)
+                .onPrimitive().setGeneratorStrategy(buildStrategy)
                 .build(short.class);
         int i = new ObjectBuilder()
-                .onPrimitiveProperty().setGeneratorStrategy(buildStrategy)
+                .onPrimitive().setGeneratorStrategy(buildStrategy)
                 .build(int.class);
         long l = new ObjectBuilder()
-                .onPrimitiveProperty().setGeneratorStrategy(buildStrategy)
+                .onPrimitive().setGeneratorStrategy(buildStrategy)
                 .build(long.class);
         float f = new ObjectBuilder()
-                .onPrimitiveProperty().setGeneratorStrategy(buildStrategy)
+                .onPrimitive().setGeneratorStrategy(buildStrategy)
                 .build(float.class);
         double d = new ObjectBuilder()
-                .onPrimitiveProperty().setGeneratorStrategy(buildStrategy)
+                .onPrimitive().setGeneratorStrategy(buildStrategy)
                 .build(double.class);
         char c = new ObjectBuilder()
-                .onPrimitiveProperty().setGeneratorStrategy(buildStrategy)
+                .onPrimitive().setGeneratorStrategy(buildStrategy)
                 .build(char.class);
         boolean bool = new ObjectBuilder()
-                .onPrimitiveProperty().setGeneratorStrategy(buildStrategy)
+                .onPrimitive().setGeneratorStrategy(buildStrategy)
                 .build(boolean.class);
 
         switch (buildStrategy) {

@@ -1,7 +1,11 @@
 package org.biins.objectbuilder.util;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.biins.objectbuilder.types.wrapper.WrapperTypeRegistry;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
 /**
@@ -36,5 +40,54 @@ public class ClassUtils {
     public static boolean isSameCompositeType(Class<?> type1, Class<?> type2) {
         return (isArray(type1) && isArray(type2)) ||
                 (isCollection(type1) && isCollection(type2));
+    }
+
+    public static Field[] getFields(Class<?> type) {
+        return type.getDeclaredFields();
+    }
+
+    public static <T> T newInstance(Class<T> type) {
+        try {
+            Constructor<T> constructor = type.getDeclaredConstructor();
+            if (type.getEnclosingClass() != null && constructor == null) {
+                // inner, no static class
+                throw new IllegalArgumentException("Inner class is not supported");
+                // Object enclosing = newInstance(type.getEnclosingClass());
+                // Constructor<T> constructor = type.getConstructor(enclosing.getClass());
+                // return constructor.newInstance(enclosing);
+
+            }
+            else {
+                if (!constructor.isAccessible()) {
+                    constructor.setAccessible(true);
+                }
+                return constructor.newInstance();
+            }
+        }
+        catch (ReflectiveOperationException e) {
+            throw  new RuntimeException(e);
+        }
+    }
+
+    public static <T> T newInstance(Class<T> type, Constructor<?> constructor, Object ... parameters) {
+        try {
+            return (T) constructor.newInstance(parameters);
+        }
+        catch (ReflectiveOperationException e) {
+            return null;
+        }
+    }
+
+    public static void setProperty(Object o, Field field, Object fieldValue) {
+        try {
+            if (!field.isAccessible()) {
+                field.setAccessible(true);
+            }
+
+            field.set(o, fieldValue);
+        }
+        catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

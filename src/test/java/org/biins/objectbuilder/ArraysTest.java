@@ -54,17 +54,17 @@ public class ArraysTest {
     @Test(dataProvider = "buildStrategy")
     public void arrayPrimitiveObject(ArrayGeneratorStrategy buildStrategy) {
         byte[] b = new ObjectBuilder()
-                .onPrimitiveProperty().setGeneratorStrategy(PrimitiveGeneratorStrategy.DEFAULT)
+                .onPrimitive().setGeneratorStrategy(PrimitiveGeneratorStrategy.DEFAULT)
                 .onWrapper().setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT)
                 .onArray().setGeneratorStrategy(buildStrategy)
                 .build(byte[].class);
         short[] s = new ObjectBuilder()
-                .onWrapperProperty().setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT)
+                .onWrapper().setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT)
                 .onPrimitive().setGeneratorStrategy(PrimitiveGeneratorStrategy.DEFAULT)
                 .onArray().setGeneratorStrategy(buildStrategy)
                 .build(short[].class);
         int[] i = new ObjectBuilder()
-                .onWrapperProperty().setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT)
+                .onWrapper().setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT)
                 .onPrimitive().setGeneratorStrategy(PrimitiveGeneratorStrategy.DEFAULT)
                 .onArray().setGeneratorStrategy(buildStrategy)
                 .build(int[].class);

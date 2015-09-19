@@ -29,7 +29,7 @@ public class StringsTest {
     @Test(dataProvider = "buildStrategy")
     public void string(StringGeneratorStrategy buildStrategy) {
         String def = new ObjectBuilder()
-                .onWrapperProperty().setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT)
+                .onWrapper().setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT)
                 .onString().setGeneratorStrategy(buildStrategy)
                 .build(String.class);
         String size5 = new ObjectBuilder()

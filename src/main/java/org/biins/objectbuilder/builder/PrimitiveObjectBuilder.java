@@ -11,7 +11,7 @@ public class PrimitiveObjectBuilder extends AbstractBuilder implements Builder {
 
     protected PrimitiveGeneratorStrategy primitiveStrategy = PrimitiveGeneratorStrategy.DEFAULT;
 
-    public PrimitiveObjectBuilder setPrimitiveStrategy(PrimitiveGeneratorStrategy primitiveStrategy) {
+    public PrimitiveObjectBuilder setGeneratorStrategy(PrimitiveGeneratorStrategy primitiveStrategy) {
         this.primitiveStrategy = primitiveStrategy;
         return this;
     }

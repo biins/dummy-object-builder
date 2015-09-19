@@ -29,30 +29,30 @@ public class PrimitiveWrappersTest {
     @Test(dataProvider = "buildStrategy")
     public void wrapperObject(WrapperGeneratorStrategy buildStrategy) {
         Byte b = new ObjectBuilder()
-                .onPrimitiveProperty().setGeneratorStrategy(PrimitiveGeneratorStrategy.DEFAULT)
+                .onPrimitive().setGeneratorStrategy(PrimitiveGeneratorStrategy.DEFAULT)
                 .onWrapper().setGeneratorStrategy(buildStrategy)
                 .build(Byte.class);
         Short s = new ObjectBuilder()
-                .onPrimitiveProperty().setGeneratorStrategy(PrimitiveGeneratorStrategy.DEFAULT)
+                .onPrimitive().setGeneratorStrategy(PrimitiveGeneratorStrategy.DEFAULT)
                 .onWrapper().setGeneratorStrategy(buildStrategy)
                 .build(Short.class);
         Integer i = new ObjectBuilder()
-                .onWrapperProperty().setGeneratorStrategy(buildStrategy)
+                .onWrapper().setGeneratorStrategy(buildStrategy)
                 .build(Integer.class);
         Long l = new ObjectBuilder()
-                .onWrapperProperty().setGeneratorStrategy(buildStrategy)
+                .onWrapper().setGeneratorStrategy(buildStrategy)
                 .build(Long.class);
         Float f = new ObjectBuilder()
-                .onWrapperProperty().setGeneratorStrategy(buildStrategy)
+                .onWrapper().setGeneratorStrategy(buildStrategy)
                 .build(Float.class);
         Double d = new ObjectBuilder()
-                .onWrapperProperty().setGeneratorStrategy(buildStrategy)
+                .onWrapper().setGeneratorStrategy(buildStrategy)
                 .build(Double.class);
         Character c = new ObjectBuilder()
-                .onWrapperProperty().setGeneratorStrategy(buildStrategy)
+                .onWrapper().setGeneratorStrategy(buildStrategy)
                 .build(Character.class);
         Boolean bool = new ObjectBuilder()
-                .onWrapperProperty().setGeneratorStrategy(buildStrategy)
+                .onWrapper().setGeneratorStrategy(buildStrategy)
                 .build(Boolean.class);
 
         switch (buildStrategy) {

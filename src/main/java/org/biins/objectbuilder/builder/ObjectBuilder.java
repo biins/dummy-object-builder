@@ -18,6 +18,7 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
     private final ArrayObjectBuilder arrayObjectBuilder;
     private final StringObjectBuilder stringObjectBuilder;
     private final CollectionObjectBuilder collectionObjectBuilder;
+    private final CommonObjectBuilder commonObjectBuilder;
 
     public ObjectBuilder() {
         primitiveObjectBuilder = new PrimitiveObjectBuilder();
@@ -25,20 +26,21 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
         arrayObjectBuilder = new ArrayObjectBuilder();
         stringObjectBuilder = new StringObjectBuilder();
         collectionObjectBuilder = new CollectionObjectBuilder();
+        commonObjectBuilder = new CommonObjectBuilder();
     }
 
-    public PrimitiveObjectBuilder onPrimitiveProperty() {
+    public PrimitiveObjectBuilder onPrimitive() {
         return primitiveObjectBuilder;
     }
-    public PrimitiveObjectBuilder onPrimitiveProperty(PrimitiveGeneratorStrategy strategy) {
-        return onPrimitiveProperty().setGeneratorStrategy(strategy);
+    public PrimitiveObjectBuilder onPrimitive(PrimitiveGeneratorStrategy strategy) {
+        return onPrimitive().setGeneratorStrategy(strategy);
     }
 
-    public WrapperObjectBuilder onWrapperProperty() {
+    public WrapperObjectBuilder onWrapper() {
         return wrapperObjectBuilder;
     }
-    public WrapperObjectBuilder onWrapperProperty(WrapperGeneratorStrategy strategy) {
-        return onWrapperProperty().setGeneratorStrategy(strategy);
+    public WrapperObjectBuilder onWrapper(WrapperGeneratorStrategy strategy) {
+        return onWrapper().setGeneratorStrategy(strategy);
     }
 
     public ArrayObjectBuilder onArray() {
@@ -64,7 +66,10 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
 
     @Override
     public <T> T build(Class<T> type) {
-        if (ClassUtils.isPrimitive(type)) {
+        if (false /*TODO resolvers*/) {
+
+        }
+        else if (ClassUtils.isPrimitive(type)) {
             return primitiveObjectBuilder.buildPrimitive(type);
         }
         else if (ClassUtils.isWrapperClass(type)) {
@@ -78,6 +83,9 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
         }
         else if (ClassUtils.isCollection(type)) {
             return collectionObjectBuilder.buildCollection(type);
+        }
+        else {
+            return commonObjectBuilder.buildObject(type);
         }
 
         throw new IllegalStateException("Unknown type");
@@ -147,7 +155,7 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
         }
 
         public PrimitiveObjectBuilder setGeneratorStrategy(PrimitiveGeneratorStrategy strategy) {
-            builder.setPrimitiveStrategy(strategy);
+            builder.setGeneratorStrategy(strategy);
             return this;
         }
 
@@ -301,4 +309,25 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
         }
     }
 
+    public class CommonObjectBuilder extends AbstractBuilder {
+
+        private final org.biins.objectbuilder.builder.CommonObjectBuilder builder;
+
+        protected CommonObjectBuilder() {
+            builder = new org.biins.objectbuilder.builder.CommonObjectBuilder(ObjectBuilder.this);
+        }
+
+        public <T> T build(Class<T> type) {
+            return ObjectBuilder.this.build(type);
+        }
+
+        public CommonObjectBuilder setGeneratorStrategy(CommonObjectGeneratorStrategy strategy) {
+            builder.setGeneratorStrategy(strategy);
+            return this;
+        }
+
+        public <T> T buildObject(Class<T> type) {
+            return builder.buildObject(type);
+        }
+    }
 }

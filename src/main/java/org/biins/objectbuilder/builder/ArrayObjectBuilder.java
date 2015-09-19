@@ -15,12 +15,11 @@ import java.util.Arrays;
 @SuppressWarnings("unchecked")
 public class ArrayObjectBuilder extends AbstractCompositeBuilder implements Builder {
 
-    private ArrayGeneratorStrategy arrayStrategy;
+    private ArrayGeneratorStrategy arrayStrategy = ArrayGeneratorStrategy.DEFAULT;
     private int[] size = new int[]{0};
 
     public ArrayObjectBuilder(ObjectBuilder objectBuilder) {
         super(objectBuilder);
-        array = true;
     }
 
     public ArrayObjectBuilder setSize(int ... size) {
