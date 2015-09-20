@@ -4,6 +4,8 @@ import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.biins.objectbuilder.builder.ObjectBuilder;
 import org.biins.objectbuilder.builder.strategy.*;
 import org.biins.objectbuilder.classes.*;
+import org.biins.objectbuilder.classes.real.Article;
+import org.biins.objectbuilder.classes.real.Page;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -348,7 +350,7 @@ public class ObjectsTest {
         assertEquals((Set)b, Collections.singleton(Collections.emptyList()));
         assertEquals((List)c, Collections.singletonList(Collections.emptySet()));
         assertEquals(o.collectionObject.d, Collections.singletonList(Collections.emptySet()));
-        assertEquals(o.collectionObject.f, Collections.singletonList((Float)Float.MAX_VALUE));
+        assertEquals(o.collectionObject.f, Collections.singletonList((Float) Float.MAX_VALUE));
         assertEquals(o.collectionObject.i, Collections.singletonList(new int[]{Integer.MIN_VALUE}));
         assertEquals(o.collectionObject.l.size(), 1);
         assertEquals(o.collectionObject.l.iterator().next(), new Long[][]{new Long[0]});
@@ -380,6 +382,51 @@ public class ObjectsTest {
         assertEquals(o.stringObject.array[0].length(), 1);
         assertEquals(o.stringObject.list.size(), 1);
         assertEquals(o.stringObject.list.get(0).length(), 1);
+
+    }
+
+    // todo - custom resolver
+    // todo - custom value
+    // todo - custom custom generator
+    // todo - enum
+    // todo - map
+    // todo - parent attrs
+
+    @Test
+    public void realObjectTest() {
+        Page page = new ObjectBuilder()
+                .onPrimitive(PrimitiveGeneratorStrategy.MIN)
+                .onWrapper(WrapperGeneratorStrategy.MAX)
+                .onArray(ArrayGeneratorStrategy.VALUE).setSize(1)
+                .onCollection(CollectionGeneratorStrategy.VALUE).setSize(1)
+                .onString(StringGeneratorStrategy.VALUE).setSize(1)
+                .build(Page.class);
+
+        assertNotNull(page);
+
+        assertEquals(page.getId(), (Long) Long.MAX_VALUE);
+        assertEquals(page.isRoot(), false);
+        assertNull(page.getParent()); // cyclic
+        assertEquals(page.getChilds().size(), 1);
+        assertNull(page.getChilds().get(0)); // cyclic
+
+        assertEquals(page.getTitle().length(), 1);
+        assertEquals(page.getFriendlyUrl().length(), 1);
+        assertEquals(page.getOrder(), (Integer)Integer.MAX_VALUE);
+        assertEquals(page.getArticles().size(), 1);
+        Article article = page.getArticles().get(0);
+        assertEquals(article.getId(), (Long)Long.MAX_VALUE);
+        assertEquals(article.getArticleType().length(), 1);
+        assertEquals(article.getOrder(), (Integer)Integer.MAX_VALUE);
+        assertEquals(article.getTitle().length(), 1);
+        assertEquals(article.getContent().length(), 1);
+        assertEquals(article.getAction().length(), 1);
+        assertEquals(article.getDisplayType(), Article.Type.A);
+        assertEquals(article.getAuthor().length(), 1);
+        assertEquals(article.getPageId(), (Long)Long.MAX_VALUE);
+        assertEquals(page.getLayout().length(), 1);
+        assertEquals(page.getArticleLayout().length(), 1);
+        assertEquals(page.isVisible(), false);
 
     }
 }

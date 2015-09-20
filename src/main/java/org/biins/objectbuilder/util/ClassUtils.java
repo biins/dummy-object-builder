@@ -6,7 +6,10 @@ import org.biins.objectbuilder.types.wrapper.WrapperTypeRegistry;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Martin Janys
@@ -33,6 +36,10 @@ public class ClassUtils {
         return Collection.class.isAssignableFrom(cls);
     }
 
+    public static <T> boolean isEnum(Class<T> type) {
+        return type.isEnum();
+    }
+
     public static boolean isComposite(Class<?> cls) {
         return isArray(cls) || isCollection(cls);
     }
@@ -42,8 +49,16 @@ public class ClassUtils {
                 (isCollection(type1) && isCollection(type2));
     }
 
-    public static Field[] getFields(Class<?> type) {
-        return type.getDeclaredFields();
+    public static List<Field> getFields(Class<?> type) {
+        if (!Object.class.equals(type.getSuperclass())) {
+            List<Field> list = new ArrayList<>();
+            list.addAll(getFields(type.getSuperclass()));
+            list.addAll(Arrays.asList(type.getDeclaredFields()));
+            return list;
+        }
+        else {
+            return Arrays.asList(type.getDeclaredFields());
+        }
     }
 
     public static <T> T newInstance(Class<T> type) {

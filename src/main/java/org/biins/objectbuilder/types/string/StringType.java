@@ -16,12 +16,11 @@ public class StringType extends Type<String> {
     private static final String ALPHA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final String ALPHA_LOWER = ALPHA.toLowerCase();
 
-    private Random random;
+    private static Random random = new Random(System.currentTimeMillis());
 
     @SuppressWarnings("unchecked")
     public StringType() {
         super(String.class, ConstantPool.STRING_DEFAULT);
-        random = new Random(System.currentTimeMillis());
     }
 
     public String generate(int length, boolean lower, boolean alpha, boolean numeric) {

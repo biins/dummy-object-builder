@@ -6,18 +6,24 @@ import org.biins.objectbuilder.util.ClassUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Stack;
+import java.util.logging.Logger;
 
 /**
  * @author Martin Janys
  */
 public class CommonObjectBuilder extends AbstractBuilder implements Builder {
 
-    private final ObjectBuilder objectBuilder;
+    private final Logger logger = Logger.getLogger(CommonObjectBuilder.class.getName());
 
+    private final ObjectBuilder objectBuilder;
+    private final Stack<Class<?>> typeStack;
     private CommonObjectGeneratorStrategy objectStrategy = CommonObjectGeneratorStrategy.DEFAULT;
 
     public CommonObjectBuilder(ObjectBuilder objectBuilder) {
         this.objectBuilder = objectBuilder;
+        typeStack = new Stack<>();
     }
 
     public CommonObjectBuilder setGeneratorStrategy(CommonObjectGeneratorStrategy objectStrategy) {
@@ -31,9 +37,13 @@ public class CommonObjectBuilder extends AbstractBuilder implements Builder {
             case NULL:
                 return null;
             case VALUE:
-                return buildObjectInternal(type);
             case DEFAULT:
             default:
+                if (typeStack.contains(type)) {
+                    logger.warning("Detect cyclic reference of " + type + ". Return null");
+                    return null;
+                }
+                typeStack.push(type);
                 return buildObjectInternal(type);
         }
     }
@@ -50,7 +60,7 @@ public class CommonObjectBuilder extends AbstractBuilder implements Builder {
     }
 
     private <T> void fillObject(Object o, Class<T> type) {
-        Field[] fields = ClassUtils.getFields(type);
+        List<Field> fields = ClassUtils.getFields(type);
         for (Field field : fields) {
             Class<?> fieldType = field.getType();
             Object fieldValue;

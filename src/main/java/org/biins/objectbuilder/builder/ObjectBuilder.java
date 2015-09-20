@@ -84,6 +84,9 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
         else if (ClassUtils.isCollection(type)) {
             return collectionObjectBuilder.buildCollection(type);
         }
+        else if (ClassUtils.isEnum(type)) {
+            return null;
+        }
         else {
             return commonObjectBuilder.buildObject(type);
         }
