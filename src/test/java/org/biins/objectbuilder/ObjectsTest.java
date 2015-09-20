@@ -1,6 +1,5 @@
 package org.biins.objectbuilder;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.biins.objectbuilder.builder.ObjectBuilder;
 import org.biins.objectbuilder.builder.strategy.*;
 import org.biins.objectbuilder.classes.*;
@@ -426,5 +425,13 @@ public class ObjectsTest {
         assertEquals(page.getArticleLayout().length(), 1);
         assertEquals(page.isVisible(), false);
 
+    }
+
+    @Test
+    public void resolvableTypes() {
+        ResolvableTypesObject object = new ObjectBuilder().build(ResolvableTypesObject.class);
+        assertEquals(object.iterable, Collections.emptyList());
+        assertEquals(object.iterator, Collections.emptyIterator());
+        assertEquals(object.enumeration, Collections.emptyEnumeration());
     }
 }

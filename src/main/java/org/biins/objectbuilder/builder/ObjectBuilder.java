@@ -1,10 +1,15 @@
 package org.biins.objectbuilder.builder;
 
 import org.biins.objectbuilder.builder.strategy.*;
+import org.biins.objectbuilder.resolver.TypeGeneratorResolver;
+import org.biins.objectbuilder.resolver.def.EnumerationGeneratorResolver;
+import org.biins.objectbuilder.resolver.def.IterableGeneratorResolver;
+import org.biins.objectbuilder.resolver.def.IteratorGeneratorResolver;
 import org.biins.objectbuilder.types.Types;
 import org.biins.objectbuilder.util.ClassUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -21,6 +26,8 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
     private final CommonObjectBuilder commonObjectBuilder;
     private final EnumObjectBuilder enumObjectBuilder;
 
+    private final List<TypeGeneratorResolver<?>> generatorResolvers = new ArrayList<>();
+
     public ObjectBuilder() {
         primitiveObjectBuilder = new PrimitiveObjectBuilder();
         wrapperObjectBuilder = new WrapperObjectBuilder();
@@ -29,6 +36,11 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
         collectionObjectBuilder = new CollectionObjectBuilder();
         commonObjectBuilder = new CommonObjectBuilder();
         enumObjectBuilder = new EnumObjectBuilder();
+    }
+
+    public ObjectBuilder addGeneratorResolver(TypeGeneratorResolver resolver) {
+        generatorResolvers.add(resolver);
+        return this;
     }
 
     public PrimitiveObjectBuilder onPrimitive() {
@@ -75,8 +87,9 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
 
     @Override
     public <T> T build(Class<T> type) {
-        if (false /*TODO resolvers*/) {
-
+        TypeGeneratorResolver<T>  resolver = getResolver(type);
+        if (resolver != null) {
+            return resolver.resolve(type, this);
         }
         else if (ClassUtils.isPrimitive(type)) {
             return primitiveObjectBuilder.buildPrimitive(type);
@@ -99,8 +112,28 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
         else {
             return commonObjectBuilder.buildObject(type);
         }
+    }
 
-        throw new IllegalStateException("Unknown type");
+    @SuppressWarnings("unchecked")
+    private <T> TypeGeneratorResolver<T> getResolver(Class<T> type) {
+        for (TypeGeneratorResolver resolver : getAllResolvers()) {
+            if (resolver.canResolve(type)) {
+                return resolver;
+            }
+        }
+
+        return null;
+    }
+
+    private <T> List<TypeGeneratorResolver<?>> getAllResolvers() {
+        List<TypeGeneratorResolver<?>> resolvers = new ArrayList<>();
+        resolvers.addAll(generatorResolvers);
+        resolvers.addAll(Arrays.asList(
+                new EnumerationGeneratorResolver(),
+                new IteratorGeneratorResolver(),
+                new IterableGeneratorResolver()
+        ));
+        return resolvers;
     }
 
     private abstract class AbstractTransitionsBuilder implements Builder {
