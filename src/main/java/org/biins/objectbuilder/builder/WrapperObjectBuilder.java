@@ -11,7 +11,7 @@ public class WrapperObjectBuilder extends AbstractBuilder implements Builder {
 
     protected WrapperGeneratorStrategy wrapperStrategy = WrapperGeneratorStrategy.DEFAULT;
 
-    public WrapperObjectBuilder setWrapperStrategy(WrapperGeneratorStrategy wrapper) {
+    public WrapperObjectBuilder setGeneratorStrategy(WrapperGeneratorStrategy wrapper) {
         this.wrapperStrategy = wrapper;
         return this;
     }

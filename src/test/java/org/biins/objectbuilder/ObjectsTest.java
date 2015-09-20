@@ -400,6 +400,7 @@ public class ObjectsTest {
                 .onArray(ArrayGeneratorStrategy.VALUE).setSize(1)
                 .onCollection(CollectionGeneratorStrategy.VALUE).setSize(1)
                 .onString(StringGeneratorStrategy.VALUE).setSize(1)
+                .onEnum(EnumGeneratorStrategy.FIRST)
                 .build(Page.class);
 
         assertNotNull(page);

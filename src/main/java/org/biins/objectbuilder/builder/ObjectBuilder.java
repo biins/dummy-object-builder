@@ -19,6 +19,7 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
     private final StringObjectBuilder stringObjectBuilder;
     private final CollectionObjectBuilder collectionObjectBuilder;
     private final CommonObjectBuilder commonObjectBuilder;
+    private final EnumObjectBuilder enumObjectBuilder;
 
     public ObjectBuilder() {
         primitiveObjectBuilder = new PrimitiveObjectBuilder();
@@ -27,6 +28,7 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
         stringObjectBuilder = new StringObjectBuilder();
         collectionObjectBuilder = new CollectionObjectBuilder();
         commonObjectBuilder = new CommonObjectBuilder();
+        enumObjectBuilder = new EnumObjectBuilder();
     }
 
     public PrimitiveObjectBuilder onPrimitive() {
@@ -64,6 +66,13 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
         return onCollection().setGeneratorStrategy(strategy);
     }
 
+    public EnumObjectBuilder onEnum() {
+        return ObjectBuilder.this.enumObjectBuilder;
+    }
+    public EnumObjectBuilder onEnum(EnumGeneratorStrategy strategy) {
+        return onEnum().setGeneratorStrategy(strategy);
+    }
+
     @Override
     public <T> T build(Class<T> type) {
         if (false /*TODO resolvers*/) {
@@ -85,7 +94,7 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
             return collectionObjectBuilder.buildCollection(type);
         }
         else if (ClassUtils.isEnum(type)) {
-            return null;
+            return enumObjectBuilder.buildEnum(type);
         }
         else {
             return commonObjectBuilder.buildObject(type);
@@ -143,6 +152,13 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
         public CollectionObjectBuilder onCollection(CollectionGeneratorStrategy strategy) {
             return onCollection().setGeneratorStrategy(strategy);
         }
+
+        public EnumObjectBuilder onEnum() {
+            return ObjectBuilder.this.enumObjectBuilder;
+        }
+        public EnumObjectBuilder onEnum(EnumGeneratorStrategy strategy) {
+            return onEnum().setGeneratorStrategy(strategy);
+        }
     }
 
     public class PrimitiveObjectBuilder extends AbstractTransitionsBuilder {
@@ -181,12 +197,35 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
         }
 
         public WrapperObjectBuilder setGeneratorStrategy(WrapperGeneratorStrategy strategy) {
-            builder.setWrapperStrategy(strategy);
+            builder.setGeneratorStrategy(strategy);
             return this;
         }
 
         public <T> T buildPrimitiveWrapper(Class<T> type) {
             return builder.buildPrimitiveWrapper(type);
+        }
+    }
+
+    public class EnumObjectBuilder extends AbstractTransitionsBuilder {
+
+        private final org.biins.objectbuilder.builder.EnumObjectBuilder builder;
+
+        protected EnumObjectBuilder() {
+            builder = new org.biins.objectbuilder.builder.EnumObjectBuilder();
+        }
+
+        @Override
+        public <T> T build(Class<T> type) {
+            return ObjectBuilder.this.build(type);
+        }
+
+        public EnumObjectBuilder setGeneratorStrategy(EnumGeneratorStrategy strategy) {
+            builder.setGeneratorStrategy(strategy);
+            return this;
+        }
+
+        public <T> T buildEnum(Class<T> type) {
+            return builder.buildEnum(type);
         }
     }
 
@@ -308,7 +347,7 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
 
         @SuppressWarnings("unchecked")
         public <T> T buildString() {
-            return (T) builder.buildString(String.class);
+            return (T) builder.buildString();
         }
     }
 

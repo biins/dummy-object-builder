@@ -57,11 +57,11 @@ public class StringObjectBuilder extends AbstractBuilder implements Builder {
     @Override
     public <T> T build(Class<T> type) {
         Validate.isTrue(String.class.isAssignableFrom(type));
-        return buildString(type);
+        return buildString();
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T buildString(Class<T> type) {
+    public <T> T buildString() {
         StringType stringType = StringTypeRegistry.get();
         switch (stringStrategy) {
             case EMPTY:
@@ -74,7 +74,7 @@ public class StringObjectBuilder extends AbstractBuilder implements Builder {
                 return (T) stringType.generate(size, valueOrElse(lower, false), valueOrElse(alpha, !isAttributesSet()), valueOrElse(numeric, !isAttributesSet()));
             case DEFAULT:
             default:
-                return (T) ConstantPool.EMPTY_STRING;
+                return (T) stringType.getDefaultValue();
         }
     }
 
