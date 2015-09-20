@@ -25,8 +25,6 @@ public class CollectionTypeRegistry {
         COLLECTION_DEFAULT.put(Collection.class, Collections.emptyList());
     }
 
-    // todo iterator, iterable, enumeration
-
     @SuppressWarnings("unchecked")
     public static <T> CollectionType<T> get(Class<T> type) {
         return new CollectionType<>(type);

@@ -18,6 +18,8 @@ public class EnumType extends Type {
 
     public int size() {
         Object[] enumConstants = getType().getEnumConstants();
+        if (enumConstants == null)
+            return 0;
         return enumConstants.length;
     }
 
@@ -26,6 +28,8 @@ public class EnumType extends Type {
     }
     public Object generate(int position) {
         Object[] enumConstants = getType().getEnumConstants();
+        if (enumConstants == null || enumConstants.length == 0)
+            return null;
         return enumConstants[position];
     }
 }

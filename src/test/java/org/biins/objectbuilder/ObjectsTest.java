@@ -385,12 +385,9 @@ public class ObjectsTest {
 
     }
 
-    // todo - custom resolver
     // todo - custom value
     // todo - custom custom generator
-    // todo - enum
     // todo - map
-    // todo - parent attrs
 
     @Test
     public void realObjectTest() {
