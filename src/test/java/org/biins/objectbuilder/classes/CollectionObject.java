@@ -16,5 +16,6 @@ public class CollectionObject {
     public Collection<Float> f;
     public List<int[]> i;
     public Set<Long[][]> l;
+    public Set set;
 
 }

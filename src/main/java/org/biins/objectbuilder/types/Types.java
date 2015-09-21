@@ -6,26 +6,25 @@ import java.lang.reflect.Type;
 /**
  * @author Martin Janys
  */
-public class Types<TYPE> {
+public class Types {
 
-    private final Class<TYPE> type;
+    private final Class<?> type;
 
-    private Types<?> next;
-    private Types<?> last;
+    private Types next;
+    private Types last;
 
-    private Types(Class<TYPE> type) {
+    private Types(Class<?> type) {
         this.type = type;
         this.last = this;
     }
 
-    public Types<TYPE> of(Class<?> type) {
-        Types<?> next = new Types<>(type);
-        this.last.next = next;
+    public Types of(Class<?> type) {
+        this.last.next = new Types(type);
         this.last = this.last.next;
         return this;
     }
 
-    public Class<TYPE> getType() {
+    public Class<?> getType() {
         return type;
     }
 
@@ -33,37 +32,42 @@ public class Types<TYPE> {
         return next;
     }
 
-    public static Types<?> typeOf(Class<?> type) {
-        return new Types<>(type);
+    public static Types typeOf(Class<?> type) {
+        return new Types(type);
     }
 
-    public static Types<?> typeForCollection(Type genericType) {
+    public static Types typeOf(Type genericType) {
         if (genericType instanceof ParameterizedType) {
-            return typeForCollection((ParameterizedType) genericType);
+            ParameterizedType type = (ParameterizedType) genericType;
+            Types types = typeOf(type.getRawType());
+            return typeOf(type, types);
+        }
+        else if (genericType instanceof Class) {
+            return typeOf((Class)genericType);
         }
         else {
             return null;
         }
     }
 
-    public static Types<?> typeForCollection(ParameterizedType parameterizedType) {
+    public static Types typeOf(ParameterizedType parameterizedType) {
         Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
         if (actualTypeArguments.length > 0) {
-            Types<?> types = Types.typeOf(resolveClass(actualTypeArguments[0]));
-            types = typeForCollection(actualTypeArguments[0], types);
+            Types types = Types.typeOf(resolveClass(actualTypeArguments[0]));
+            types = typeOf(actualTypeArguments[0], types);
             return types;
         }
 
         return null;
     }
 
-    private static Types<?> typeForCollection(Type genericType, Types<?> types) {
+    private static Types typeOf(Type genericType, Types types) {
         if (genericType instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) genericType;
             Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
             if (actualTypeArguments.length > 0) {
                 types.of(resolveClass(actualTypeArguments[0]));
-                types = typeForCollection(actualTypeArguments[0], types);
+                types = typeOf(actualTypeArguments[0], types);
                 return types;
             }
         }

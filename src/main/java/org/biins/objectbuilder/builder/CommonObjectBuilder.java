@@ -6,6 +6,9 @@ import org.biins.objectbuilder.util.ClassUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 import java.util.logging.Logger;
@@ -65,13 +68,39 @@ public class CommonObjectBuilder extends AbstractBuilder implements Builder {
             Class<?> fieldType = field.getType();
             Object fieldValue;
             if (ClassUtils.isCollection(fieldType)) {
-                fieldValue = objectBuilder.onCollection().of(Types.typeForCollection(field.getGenericType())).build(fieldType);
+                Type genericType = field.getGenericType();
+                Types types = genericType instanceof ParameterizedType ? Types.typeOf(((ParameterizedType)genericType).getActualTypeArguments()[0]) : null;
+                fieldValue = objectBuilder.onCollection()
+                        .of(types)
+                        .build(fieldType);
+            }
+            else if (ClassUtils.isMap(fieldType)) {
+                Type[] types = getGenericType(field);
+                fieldValue = objectBuilder.onMap()
+                        .ofKey(Types.typeOf(types[0]))
+                        .ofValue(Types.typeOf(types[1]))
+                        .build(fieldType);
             }
             else {
                 fieldValue = objectBuilder.build(fieldType);
             }
             ClassUtils.setProperty(o, field, fieldValue);
         }
+    }
+
+    private Type[] getGenericType(Field field) {
+        Type[] types = new Type[2];
+        if (field.getGenericType() instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) field.getGenericType();
+            Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+            if (types.length > 0) {
+                types[0] = actualTypeArguments[0];
+            }
+            if (types.length > 1) {
+                types[1] = actualTypeArguments[1];
+            }
+        }
+        return types;
     }
 
     private <T> Object newInstance(Class<T> type) {

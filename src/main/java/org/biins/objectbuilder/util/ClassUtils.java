@@ -6,10 +6,7 @@ import org.biins.objectbuilder.types.wrapper.WrapperTypeRegistry;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Martin Janys
@@ -38,6 +35,10 @@ public class ClassUtils {
 
     public static <T> boolean isEnum(Class<T> type) {
         return type.isEnum();
+    }
+
+    public static <T> boolean isMap(Class<T> type) {
+        return Map.class.isAssignableFrom(type);
     }
 
     public static boolean isComposite(Class<?> cls) {

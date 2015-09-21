@@ -20,7 +20,7 @@ public class CollectionObjectBuilder extends AbstractCompositeBuilder implements
     private CollectionGeneratorStrategy collectionGeneratorStrategy = CollectionGeneratorStrategy.DEFAULT;
     private int[] size = new int[]{0};
 
-    private Types<?> elementType;
+    private Types elementType;
 
     public CollectionObjectBuilder(ObjectBuilder objectBuilder) {
         super(objectBuilder);
@@ -45,7 +45,7 @@ public class CollectionObjectBuilder extends AbstractCompositeBuilder implements
         return this;
     }
 
-    public CollectionObjectBuilder of(Types<?> elementType) {
+    public CollectionObjectBuilder of(Types elementType) {
         this.elementType = elementType;
         return this;
     }
@@ -60,7 +60,7 @@ public class CollectionObjectBuilder extends AbstractCompositeBuilder implements
         return buildCollection(collectionType, elementType, size);
     }
 
-    public <T> T buildCollection(Class<T> type, Types<?> elementType) {
+    public <T> T buildCollection(Class<T> type, Types elementType) {
         CollectionType<T> collectionType = CollectionTypeRegistry.get(type);
         return buildCollection(collectionType, elementType, size);
     }

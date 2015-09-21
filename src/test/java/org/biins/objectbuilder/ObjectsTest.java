@@ -11,6 +11,7 @@ import org.testng.annotations.Test;
 
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -224,9 +225,9 @@ public class ObjectsTest {
     @DataProvider(name = "collectionBuildStrategy")
     public static Object[][] collectionBuildStrategy() {
         return new Object[][]{
-                {CollectionGeneratorStrategy.DEFAULT},
-                {CollectionGeneratorStrategy.SINGLETON},
-                {CollectionGeneratorStrategy.NULL},
+//                {CollectionGeneratorStrategy.DEFAULT},
+//                {CollectionGeneratorStrategy.SINGLETON},
+//                {CollectionGeneratorStrategy.NULL},
                 {CollectionGeneratorStrategy.VALUE}
         };
     }
@@ -250,6 +251,7 @@ public class ObjectsTest {
                 assertEquals(collectionObject.f, Collections.singletonList(0f));
                 assertEquals(collectionObject.i, Collections.singletonList(new int[0]));
                 assertEquals(collectionObject.l, Collections.singletonList(new Long[0][]));
+                assertEquals(collectionObject.set, Collections.emptySet());
                 break;
             case NULL:
                 assertNull(bool);
@@ -259,6 +261,7 @@ public class ObjectsTest {
                 assertNull(collectionObject.f);
                 assertNull(collectionObject.i);
                 assertNull(collectionObject.l);
+                assertNull(collectionObject.set);
                 break;
             case DEFAULT:
             default:
@@ -269,6 +272,7 @@ public class ObjectsTest {
                 assertEquals(collectionObject.f, Collections.emptyList());
                 assertEquals(collectionObject.i, Collections.emptyList());
                 assertEquals(collectionObject.l, Collections.emptySet());
+                assertEquals(collectionObject.set, Collections.emptySet());
         }
     }
 
@@ -385,8 +389,9 @@ public class ObjectsTest {
     }
 
     // todo - custom value
-    // todo - custom custom generator
-    // todo - map
+    // todo - custom custom generator -> map key
+    // todo - set strategy, with string
+    // todo - class with T field;+
 
     @Test
     public void realObjectTest() {
@@ -433,5 +438,52 @@ public class ObjectsTest {
         assertEquals(object.iterable, Collections.emptyList());
         assertEquals(object.iterator, Collections.emptyIterator());
         assertEquals(object.enumeration, Collections.emptyEnumeration());
+    }
+
+    @DataProvider(name = "mapBuildStrategy")
+    public static Object[][] mapBuildStrategy() {
+        return new Object[][]{
+                {MapGeneratorStrategy.DEFAULT},
+                {MapGeneratorStrategy.NULL},
+                {MapGeneratorStrategy.SINGLETON},
+                {MapGeneratorStrategy.VALUE}
+        };
+    }
+
+    @Test(dataProvider = "mapBuildStrategy")
+    public void mapObjects(MapGeneratorStrategy generatorStrategy) {
+        MapObject maps = new ObjectBuilder()
+                .onCollection(CollectionGeneratorStrategy.SINGLETON)
+                .onMap(generatorStrategy).setSize(1)
+                .build(MapObject.class);
+
+        switch (generatorStrategy) {
+            case NULL:
+                assertNull(maps.map1);
+                assertNull(maps.map2);
+                assertNull(maps.map3);
+                assertNull(maps.map);
+                break;
+            case SINGLETON:
+            case VALUE:
+                assertEquals(maps.map1, new HashMap<String, Integer>(){{
+                    put("", 0);
+                }});
+                assertEquals(maps.map2, new HashMap<List<String>, Integer>(){{
+                    put(Collections.singletonList(""), 0);
+                }});
+                assertEquals(maps.map3, new HashMap<String, List<Integer>>(){{
+                    put("", Collections.singletonList(0));
+                }});
+                assertEquals(maps.map, Collections.emptyMap());
+                break;
+            case DEFAULT:
+            default:
+                assertEquals(maps.map1, Collections.emptyMap());
+                assertEquals(maps.map2, Collections.emptyMap());
+                assertEquals(maps.map2, Collections.emptyMap());
+                assertEquals(maps.map, Collections.emptyMap());
+        }
+
     }
 }

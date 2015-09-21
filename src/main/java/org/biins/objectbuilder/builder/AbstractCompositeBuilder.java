@@ -18,7 +18,7 @@ public abstract class AbstractCompositeBuilder extends AbstractBuilder {
         this.objectBuilder = objectBuilder;
     }
 
-    protected Object createCompositeObject(Types<?> types) {
+    protected Object createCompositeObject(Types types) {
         Class<?> type = types.getType();
          if (ClassUtils.isArray(type)) {
              return objectBuilder.onArray().buildArray(type);
@@ -31,7 +31,7 @@ public abstract class AbstractCompositeBuilder extends AbstractBuilder {
         }
     }
 
-    protected Object createCompositeObject(Types<?> types, int ... size) {
+    protected Object createCompositeObject(Types types, int ... size) {
         Class<?> type = types.getType();
         if (ClassUtils.isArray(type)) {
             return objectBuilder.onArray().buildArray(type, size);

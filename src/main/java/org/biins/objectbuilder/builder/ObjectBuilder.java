@@ -25,6 +25,7 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
     private final CollectionObjectBuilder collectionObjectBuilder;
     private final CommonObjectBuilder commonObjectBuilder;
     private final EnumObjectBuilder enumObjectBuilder;
+    private final MapObjectBuilder mapObjectBuilder;
 
     private final List<TypeGeneratorResolver<?>> generatorResolvers = new ArrayList<>();
 
@@ -36,6 +37,7 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
         collectionObjectBuilder = new CollectionObjectBuilder();
         commonObjectBuilder = new CommonObjectBuilder();
         enumObjectBuilder = new EnumObjectBuilder();
+        mapObjectBuilder = new MapObjectBuilder();
     }
 
     public ObjectBuilder addGeneratorResolver(TypeGeneratorResolver resolver) {
@@ -85,6 +87,13 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
         return onEnum().setGeneratorStrategy(strategy);
     }
 
+    public MapObjectBuilder onMap() {
+        return ObjectBuilder.this.mapObjectBuilder;
+    }
+    public MapObjectBuilder onMap(MapGeneratorStrategy strategy) {
+        return onMap().setGeneratorStrategy(strategy);
+    }
+
     @Override
     public <T> T build(Class<T> type) {
         TypeGeneratorResolver<T>  resolver = getResolver(type);
@@ -105,6 +114,9 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
         }
         else if (ClassUtils.isCollection(type)) {
             return collectionObjectBuilder.buildCollection(type);
+        }
+        else if (ClassUtils.isMap(type)) {
+            return mapObjectBuilder.buildMap(type);
         }
         else if (ClassUtils.isEnum(type)) {
             return enumObjectBuilder.buildEnum(type);
@@ -192,6 +204,14 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
         public EnumObjectBuilder onEnum(EnumGeneratorStrategy strategy) {
             return onEnum().setGeneratorStrategy(strategy);
         }
+
+        public MapObjectBuilder onMap() {
+            return ObjectBuilder.this.mapObjectBuilder;
+        }
+        public MapObjectBuilder onMap(MapGeneratorStrategy strategy) {
+            return onMap().setGeneratorStrategy(strategy);
+        }
+
     }
 
     public class PrimitiveObjectBuilder extends AbstractTransitionsBuilder {
@@ -302,7 +322,7 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
             this.builder = new org.biins.objectbuilder.builder.CollectionObjectBuilder(ObjectBuilder.this);
         }
 
-        public CollectionObjectBuilder of(Types<?> types) {
+        public CollectionObjectBuilder of(Types types) {
             builder.of(types);
             return this;
         }
@@ -326,11 +346,11 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
             return builder.buildCollection(type);
         }
 
-        <T> T buildCollection(Class<T> type, Types<?> elementType) {
+        <T> T buildCollection(Class<T> type, Types elementType) {
             return builder.buildCollection(type, elementType);
         }
 
-        <T> T buildCollection(Class<T> type, Types<?> elementType, int ... size) {
+        <T> T buildCollection(Class<T> type, Types elementType, int ... size) {
             return builder.buildCollection(type, elementType, size);
         }
     }
@@ -403,6 +423,43 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
 
         public <T> T buildObject(Class<T> type) {
             return builder.buildObject(type);
+        }
+    }
+
+    public class MapObjectBuilder extends AbstractBuilder {
+
+        private final org.biins.objectbuilder.builder.MapObjectBuilder builder;
+
+        protected MapObjectBuilder() {
+            builder = new org.biins.objectbuilder.builder.MapObjectBuilder(ObjectBuilder.this);
+        }
+
+        public <T> T build(Class<T> type) {
+            return ObjectBuilder.this.build(type);
+        }
+
+        public MapObjectBuilder setGeneratorStrategy(MapGeneratorStrategy strategy) {
+            builder.setGeneratorStrategy(strategy);
+            return this;
+        }
+
+        public <T> T buildMap(Class<T> type) {
+            return builder.buildMap(type);
+        }
+
+        public MapObjectBuilder setSize(int size) {
+            builder.setSize(size);
+            return this;
+        }
+
+        public MapObjectBuilder ofKey(Types keyType) {
+            builder.ofKey(keyType);
+            return this;
+        }
+
+        public MapObjectBuilder ofValue(Types valueType) {
+            builder.ofValue(valueType);
+            return this;
         }
     }
 }

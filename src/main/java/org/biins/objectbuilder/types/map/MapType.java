@@ -3,21 +3,17 @@ package org.biins.objectbuilder.types.map;
 import org.biins.objectbuilder.types.Type;
 
 import java.lang.reflect.Array;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * @author Martin Janys
  */
-public class MapType<T> extends Type<T> {
-
-    private final Class<?> componentType;
+public class MapType<T extends Map> extends Type<T> {
 
     @SuppressWarnings("unchecked")
     public MapType(Class<T> cls) {
-        super(cls, (T) (cls.getComponentType() != null ? Array.newInstance(cls.getComponentType(), 0) : null));
-        this.componentType = cls.getComponentType();
+        super(cls, (T) MapTypeRegistry.getDefault(cls));
     }
 
-    public Class<?> getComponentType() {
-        return componentType;
-    }
 }
