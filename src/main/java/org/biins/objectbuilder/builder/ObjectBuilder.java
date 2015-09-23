@@ -30,14 +30,46 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
     private final List<TypeGeneratorResolver<?>> generatorResolvers = new ArrayList<>();
 
     public ObjectBuilder() {
-        primitiveObjectBuilder = new PrimitiveObjectBuilder();
-        wrapperObjectBuilder = new WrapperObjectBuilder();
-        arrayObjectBuilder = new ArrayObjectBuilder();
-        stringObjectBuilder = new StringObjectBuilder();
-        collectionObjectBuilder = new CollectionObjectBuilder();
-        commonObjectBuilder = new CommonObjectBuilder();
-        enumObjectBuilder = new EnumObjectBuilder();
-        mapObjectBuilder = new MapObjectBuilder();
+        primitiveObjectBuilder = new PrimitiveObjectBuilder(createPrimitiveBuilder());
+        wrapperObjectBuilder = new WrapperObjectBuilder(createWrapperBuilder());
+        arrayObjectBuilder = new ArrayObjectBuilder(createArrayBuilder());
+        stringObjectBuilder = new StringObjectBuilder(createStringBuilder());
+        collectionObjectBuilder = new CollectionObjectBuilder(createCollectionBuilder());
+        commonObjectBuilder = new CommonObjectBuilder(createCommonBuilder());
+        enumObjectBuilder = new EnumObjectBuilder(createEnumBuilder());
+        mapObjectBuilder = new MapObjectBuilder(createMapBuilder());
+    }
+
+    protected org.biins.objectbuilder.builder.ArrayObjectBuilder createArrayBuilder() {
+        return new org.biins.objectbuilder.builder.ArrayObjectBuilder(this);
+    }
+
+    protected org.biins.objectbuilder.builder.StringObjectBuilder createStringBuilder() {
+        return new org.biins.objectbuilder.builder.StringObjectBuilder();
+    }
+
+    protected org.biins.objectbuilder.builder.CollectionObjectBuilder createCollectionBuilder() {
+        return new org.biins.objectbuilder.builder.CollectionObjectBuilder(this);
+    }
+
+    protected org.biins.objectbuilder.builder.CommonObjectBuilder createCommonBuilder() {
+        return new org.biins.objectbuilder.builder.CommonObjectBuilder(this);
+    }
+
+    protected org.biins.objectbuilder.builder.EnumObjectBuilder createEnumBuilder() {
+        return new org.biins.objectbuilder.builder.EnumObjectBuilder();
+    }
+
+    protected org.biins.objectbuilder.builder.MapObjectBuilder createMapBuilder() {
+        return new org.biins.objectbuilder.builder.MapObjectBuilder(this);
+    }
+
+    protected org.biins.objectbuilder.builder.PrimitiveObjectBuilder createPrimitiveBuilder() {
+        return new org.biins.objectbuilder.builder.PrimitiveObjectBuilder();
+    }
+
+    protected org.biins.objectbuilder.builder.WrapperObjectBuilder createWrapperBuilder() {
+        return new org.biins.objectbuilder.builder.WrapperObjectBuilder();
     }
 
     public ObjectBuilder addGeneratorResolver(TypeGeneratorResolver resolver) {
@@ -121,6 +153,10 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
         else if (ClassUtils.isEnum(type)) {
             return enumObjectBuilder.buildEnum(type);
         }
+        else if (ClassUtils.isObject(type)) {
+            //noinspection unchecked
+            return (T) new Object();
+        }
         else {
             return commonObjectBuilder.buildObject(type);
         }
@@ -148,7 +184,7 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
         return resolvers;
     }
 
-    private abstract class AbstractTransitionsBuilder implements Builder {
+    public abstract class AbstractTransitionsBuilder implements Builder {
 
         @Override
         public <T> List<T> build(Class<T> type, int count) {
@@ -218,8 +254,8 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
 
         private final org.biins.objectbuilder.builder.PrimitiveObjectBuilder builder;
 
-        protected PrimitiveObjectBuilder() {
-            builder = new org.biins.objectbuilder.builder.PrimitiveObjectBuilder();
+        public PrimitiveObjectBuilder(org.biins.objectbuilder.builder.PrimitiveObjectBuilder builder) {
+            this.builder = builder;
         }
 
         public <T> T build(Class<T> type) {
@@ -240,8 +276,8 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
 
         private final org.biins.objectbuilder.builder.WrapperObjectBuilder builder;
 
-        protected WrapperObjectBuilder() {
-            builder = new org.biins.objectbuilder.builder.WrapperObjectBuilder();
+        public WrapperObjectBuilder(org.biins.objectbuilder.builder.WrapperObjectBuilder builder) {
+            this.builder = builder;
         }
 
         @Override
@@ -263,8 +299,8 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
 
         private final org.biins.objectbuilder.builder.EnumObjectBuilder builder;
 
-        protected EnumObjectBuilder() {
-            builder = new org.biins.objectbuilder.builder.EnumObjectBuilder();
+        public EnumObjectBuilder(org.biins.objectbuilder.builder.EnumObjectBuilder builder) {
+            this.builder = builder;
         }
 
         @Override
@@ -286,8 +322,8 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
 
         private final org.biins.objectbuilder.builder.ArrayObjectBuilder builder;
 
-        protected ArrayObjectBuilder() {
-            this.builder = new org.biins.objectbuilder.builder.ArrayObjectBuilder(ObjectBuilder.this);
+        public ArrayObjectBuilder(org.biins.objectbuilder.builder.ArrayObjectBuilder builder) {
+            this.builder = builder;
         }
 
         @Override
@@ -318,8 +354,8 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
 
         private final org.biins.objectbuilder.builder.CollectionObjectBuilder builder;
 
-        protected CollectionObjectBuilder() {
-            this.builder = new org.biins.objectbuilder.builder.CollectionObjectBuilder(ObjectBuilder.this);
+        public CollectionObjectBuilder(org.biins.objectbuilder.builder.CollectionObjectBuilder builder) {
+            this.builder = builder;
         }
 
         public CollectionObjectBuilder of(Types types) {
@@ -359,8 +395,8 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
 
         private final org.biins.objectbuilder.builder.StringObjectBuilder builder;
 
-        protected StringObjectBuilder() {
-            builder = new org.biins.objectbuilder.builder.StringObjectBuilder();
+        public StringObjectBuilder(org.biins.objectbuilder.builder.StringObjectBuilder builder) {
+            this.builder = builder;
         }
 
         @Override
@@ -408,8 +444,8 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
 
         private final org.biins.objectbuilder.builder.CommonObjectBuilder builder;
 
-        protected CommonObjectBuilder() {
-            builder = new org.biins.objectbuilder.builder.CommonObjectBuilder(ObjectBuilder.this);
+        public CommonObjectBuilder(org.biins.objectbuilder.builder.CommonObjectBuilder builder) {
+            this.builder = builder;
         }
 
         public <T> T build(Class<T> type) {
@@ -430,8 +466,8 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
 
         private final org.biins.objectbuilder.builder.MapObjectBuilder builder;
 
-        protected MapObjectBuilder() {
-            builder = new org.biins.objectbuilder.builder.MapObjectBuilder(ObjectBuilder.this);
+        public MapObjectBuilder(org.biins.objectbuilder.builder.MapObjectBuilder builder) {
+            this.builder = builder;
         }
 
         public <T> T build(Class<T> type) {

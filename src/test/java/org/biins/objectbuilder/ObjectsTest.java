@@ -391,7 +391,6 @@ public class ObjectsTest {
     // todo - custom value
     // todo - custom custom generator -> map key
     // todo - set strategy, with string
-    // todo - class with T field;+
 
     @Test
     public void realObjectTest() {
@@ -485,5 +484,43 @@ public class ObjectsTest {
                 assertEquals(maps.map, Collections.emptyMap());
         }
 
+    }
+
+    @Test
+    public void parametrizedObjectTest() {
+        ParametrizedClass.Parent parent = new ObjectBuilder()
+                .onString(StringGeneratorStrategy.VALUE).setSize(1)
+                .build(ParametrizedClass.Parent.class);
+        ParametrizedClass.Child child = new ObjectBuilder()
+                .onString(StringGeneratorStrategy.VALUE).setSize(1)
+                .build(ParametrizedClass.Child.class);
+
+        assertNotNull(parent);
+        assertNotNull(child);
+
+        Object field1 = parent.field;
+        String field2 = child.field;
+
+        assertNull(field1);
+        assertNull(field2);
+
+    }
+
+    @Test
+    public void finalObjectTest() {
+        FinalObject finalObject = new ObjectBuilder()
+                .onPrimitive(PrimitiveGeneratorStrategy.MIN)
+                .build(FinalObject.class);
+
+        assertEquals(finalObject.i, 0);
+    }
+
+    @Test
+    public void staticObjectTest() {
+        new ObjectBuilder()
+                .onPrimitive(PrimitiveGeneratorStrategy.MIN)
+                .build(StaticObject.class);
+
+        assertEquals(StaticObject.i, 0);
     }
 }

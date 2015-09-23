@@ -7,7 +7,6 @@ import org.biins.objectbuilder.types.collection.CollectionTypeRegistry;
 import org.biins.objectbuilder.util.ClassUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 

@@ -1,11 +1,11 @@
 package org.biins.objectbuilder.util;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.biins.objectbuilder.types.wrapper.WrapperTypeRegistry;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.TypeVariable;
 import java.util.*;
 
 /**
@@ -41,6 +41,10 @@ public class ClassUtils {
         return Map.class.isAssignableFrom(type);
     }
 
+    public static <T> boolean isObject(Class<T> type) {
+        return Object.class.equals(type);
+    }
+
     public static boolean isComposite(Class<?> cls) {
         return isArray(cls) || isCollection(cls);
     }
@@ -51,15 +55,28 @@ public class ClassUtils {
     }
 
     public static List<Field> getFields(Class<?> type) {
-        if (!Object.class.equals(type.getSuperclass())) {
+        if (type.getSuperclass() != null) {
             List<Field> list = new ArrayList<>();
             list.addAll(getFields(type.getSuperclass()));
-            list.addAll(Arrays.asList(type.getDeclaredFields()));
+            list.addAll(getInstanceFields(type.getDeclaredFields()));
             return list;
+        }
+        else if (Object.class.equals(type)) {
+            return Collections.emptyList();
         }
         else {
             return Arrays.asList(type.getDeclaredFields());
         }
+    }
+
+    private static Collection<? extends Field> getInstanceFields(Field[] fields) {
+        List<Field> fieldList = new ArrayList<>();
+        for (Field field : fields) {
+            if (!Modifier.isStatic(field.getModifiers()) && !(field.getGenericType() instanceof TypeVariable)) {
+                fieldList.add(field);
+            }
+        }
+        return fieldList;
     }
 
     public static <T> T newInstance(Class<T> type) {
@@ -85,6 +102,7 @@ public class ClassUtils {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> T newInstance(Class<T> type, Constructor<?> constructor, Object ... parameters) {
         try {
             return (T) constructor.newInstance(parameters);
@@ -96,6 +114,9 @@ public class ClassUtils {
 
     public static void setProperty(Object o, Field field, Object fieldValue) {
         try {
+            if (Modifier.isFinal(field.getModifiers())) {
+                return;
+            }
             if (!field.isAccessible()) {
                 field.setAccessible(true);
             }
