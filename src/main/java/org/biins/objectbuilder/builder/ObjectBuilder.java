@@ -1,5 +1,7 @@
 package org.biins.objectbuilder.builder;
 
+import org.apache.commons.lang.StringUtils;
+import org.biins.objectbuilder.builder.generator.Generator;
 import org.biins.objectbuilder.builder.strategy.*;
 import org.biins.objectbuilder.resolver.TypeGeneratorResolver;
 import org.biins.objectbuilder.resolver.def.EnumerationGeneratorResolver;
@@ -8,9 +10,7 @@ import org.biins.objectbuilder.resolver.def.IteratorGeneratorResolver;
 import org.biins.objectbuilder.types.Types;
 import org.biins.objectbuilder.util.ClassUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Martin Janys
@@ -28,6 +28,7 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
     private final MapObjectBuilder mapObjectBuilder;
 
     private final List<TypeGeneratorResolver<?>> generatorResolvers = new ArrayList<>();
+    private final Set<Class> ignoredTypes = new HashSet<>();
 
     public ObjectBuilder() {
         primitiveObjectBuilder = new PrimitiveObjectBuilder(createPrimitiveBuilder());
@@ -74,6 +75,58 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
 
     public ObjectBuilder addGeneratorResolver(TypeGeneratorResolver resolver) {
         generatorResolvers.add(resolver);
+        return this;
+    }
+
+    public ObjectBuilder addIgnoredType(Class ... types) {
+        ignoredTypes.addAll(Arrays.asList(types));
+        return this;
+    }
+
+    public ObjectBuilder setStrategyForAll(String strategy) {
+        if (StringUtils.isEmpty(strategy)) {
+            return this;
+        }
+
+        switch (strategy.toUpperCase()) {
+            case "DEFAULT":
+                primitiveObjectBuilder.setGeneratorStrategy(PrimitiveGeneratorStrategy.DEFAULT);
+                wrapperObjectBuilder.setGeneratorStrategy(WrapperGeneratorStrategy.DEFAULT);
+                arrayObjectBuilder.setGeneratorStrategy(ArrayGeneratorStrategy.DEFAULT);
+                stringObjectBuilder.setGeneratorStrategy(StringGeneratorStrategy.DEFAULT);
+                collectionObjectBuilder.setGeneratorStrategy(CollectionGeneratorStrategy.DEFAULT);
+                commonObjectBuilder.setGeneratorStrategy(CommonObjectGeneratorStrategy.DEFAULT);
+                enumObjectBuilder.setGeneratorStrategy(EnumGeneratorStrategy.DEFAULT);
+                mapObjectBuilder.setGeneratorStrategy(MapGeneratorStrategy.DEFAULT);
+                break;
+            case "NULL":
+                wrapperObjectBuilder.setGeneratorStrategy(WrapperGeneratorStrategy.NULL);
+                arrayObjectBuilder.setGeneratorStrategy(ArrayGeneratorStrategy.NULL);
+                stringObjectBuilder.setGeneratorStrategy(StringGeneratorStrategy.NULL);
+                collectionObjectBuilder.setGeneratorStrategy(CollectionGeneratorStrategy.NULL);
+                commonObjectBuilder.setGeneratorStrategy(CommonObjectGeneratorStrategy.NULL);
+                enumObjectBuilder.setGeneratorStrategy(EnumGeneratorStrategy.NULL);
+                mapObjectBuilder.setGeneratorStrategy(MapGeneratorStrategy.NULL);
+                break;
+            case "MIN":
+                primitiveObjectBuilder.setGeneratorStrategy(PrimitiveGeneratorStrategy.MIN);
+                wrapperObjectBuilder.setGeneratorStrategy(WrapperGeneratorStrategy.MIN);
+                break;
+            case "MAX":
+                primitiveObjectBuilder.setGeneratorStrategy(PrimitiveGeneratorStrategy.MAX);
+                wrapperObjectBuilder.setGeneratorStrategy(WrapperGeneratorStrategy.MAX);
+                break;
+            case "VALUE":
+                arrayObjectBuilder.setGeneratorStrategy(ArrayGeneratorStrategy.VALUE);
+                stringObjectBuilder.setGeneratorStrategy(StringGeneratorStrategy.VALUE);
+                collectionObjectBuilder.setGeneratorStrategy(CollectionGeneratorStrategy.VALUE);
+                commonObjectBuilder.setGeneratorStrategy(CommonObjectGeneratorStrategy.VALUE);
+                mapObjectBuilder.setGeneratorStrategy(MapGeneratorStrategy.VALUE);
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+
         return this;
     }
 
@@ -126,11 +179,21 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
         return onMap().setGeneratorStrategy(strategy);
     }
 
+    public CommonObjectBuilder onObject() {
+        return ObjectBuilder.this.commonObjectBuilder;
+    }
+    public CommonObjectBuilder onObject(CommonObjectGeneratorStrategy strategy) {
+        return onObject().setGeneratorStrategy(strategy);
+    }
+
     @Override
     public <T> T build(Class<T> type) {
         TypeGeneratorResolver<T>  resolver = getResolver(type);
         if (resolver != null) {
             return resolver.resolve(type, this);
+        }
+        else if (ignoredTypes.contains(type)) {
+            return null;
         }
         else if (ClassUtils.isPrimitive(type)) {
             return primitiveObjectBuilder.buildPrimitive(type);
@@ -248,6 +311,12 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
             return onMap().setGeneratorStrategy(strategy);
         }
 
+        public CommonObjectBuilder onObject() {
+            return ObjectBuilder.this.commonObjectBuilder;
+        }
+        public CommonObjectBuilder onObject(CommonObjectGeneratorStrategy strategy) {
+            return onObject().setGeneratorStrategy(strategy);
+        }
     }
 
     public class PrimitiveObjectBuilder extends AbstractTransitionsBuilder {
@@ -448,13 +517,33 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
             this.builder = builder;
         }
 
-        public <T> T build(Class<T> type) {
-            return ObjectBuilder.this.build(type);
-        }
-
         public CommonObjectBuilder setGeneratorStrategy(CommonObjectGeneratorStrategy strategy) {
             builder.setGeneratorStrategy(strategy);
             return this;
+        }
+
+        CommonObjectBuilder setBaseName(String fieldFullName) {
+            builder.setBaseName(fieldFullName);
+            return this;
+        }
+
+        public CommonObjectBuilder onProperty(String property, Object ... values) {
+            builder.onProperty(property, values);
+            return this;
+        }
+
+        public <T> CommonObjectBuilder onProperty(String property, Generator<T> generator) {
+            builder.onProperty(property, generator);
+            return this;
+        }
+
+        public CommonObjectBuilder ignoreProperty(String property) {
+            builder.ignoreProperty(property);
+            return this;
+        }
+
+        public <T> T build(Class<T> type) {
+            return ObjectBuilder.this.build(type);
         }
 
         public <T> T buildObject(Class<T> type) {

@@ -1,5 +1,7 @@
 package org.biins.objectbuilder.builder;
 
+import org.apache.commons.lang.Validate;
+import org.biins.objectbuilder.builder.generator.Generator;
 import org.biins.objectbuilder.builder.strategy.CommonObjectGeneratorStrategy;
 import org.biins.objectbuilder.types.Types;
 import org.biins.objectbuilder.util.ClassUtils;
@@ -8,8 +10,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -21,11 +22,16 @@ public class CommonObjectBuilder extends AbstractBuilder implements Builder {
 
     private final ObjectBuilder objectBuilder;
     private final Stack<Class<?>> typeStack;
+    private final Set<String> ignoredProperties;
+    private final Map<String, Object> propertyValues;
     private CommonObjectGeneratorStrategy objectStrategy = CommonObjectGeneratorStrategy.DEFAULT;
+    private String baseName;
 
     public CommonObjectBuilder(ObjectBuilder objectBuilder) {
         this.objectBuilder = objectBuilder;
         typeStack = new Stack<>();
+        ignoredProperties = new HashSet<>();
+        propertyValues = new HashMap<>();
     }
 
     public CommonObjectBuilder setGeneratorStrategy(CommonObjectGeneratorStrategy objectStrategy) {
@@ -33,9 +39,31 @@ public class CommonObjectBuilder extends AbstractBuilder implements Builder {
         return this;
     }
 
+    public CommonObjectBuilder setBaseName(String baseName) {
+        this.baseName = baseName;
+        return this;
+    }
+
+    public void onProperty(String property, Object ... values) {
+        Validate.notNull(property);
+        Validate.notNull(values);
+        propertyValues.put(property, values);
+    }
+
+    public <T> void onProperty(String property, Generator<T> generator) {
+        Validate.notNull(property);
+        Validate.notNull(generator);
+        propertyValues.put(property, generator);
+    }
+
+    public void ignoreProperty(String property) {
+        ignoredProperties.add(property);
+    }
+
     @Override
     public <T> T build(Class<T> type) {
-        switch (objectStrategy) {
+        CommonObjectGeneratorStrategy strategy = !typeStack.empty() ? objectStrategy : CommonObjectGeneratorStrategy.DEFAULT;
+        switch (strategy) {
             case NULL:
                 return null;
             case VALUE:
@@ -46,7 +74,12 @@ public class CommonObjectBuilder extends AbstractBuilder implements Builder {
                     return null;
                 }
                 typeStack.push(type);
-                return buildObjectInternal(type);
+                try {
+                    return buildObjectInternal(type);
+                }
+                finally {
+                    typeStack.pop();
+                }
         }
     }
 
@@ -57,16 +90,23 @@ public class CommonObjectBuilder extends AbstractBuilder implements Builder {
     @SuppressWarnings("unchecked")
     public  <T> T buildObjectInternal(Class<T> type) {
         Object o = newInstance(type);
-        fillObject(o, type);
+        fillObject(o, type, baseName);
         return (T) o;
     }
 
-    private <T> void fillObject(Object o, Class<T> type) {
+    private <T> void fillObject(Object o, Class<T> type, String baseName) {
         List<Field> fields = ClassUtils.getFields(type);
         for (Field field : fields) {
+            String fieldFullName = baseName != null ? baseName + "." + field.getName() : field.getName();
+            if (ignoredProperties.contains(fieldFullName)) {
+                continue;
+            }
             Class<?> fieldType = field.getType();
             Object fieldValue;
-            if (ClassUtils.isCollection(fieldType)) {
+            if (propertyValues.containsKey(fieldFullName)) {
+                fieldValue = takeFieldValue(fieldFullName, propertyValues.get(fieldFullName));
+            }
+            else if (ClassUtils.isCollection(fieldType)) {
                 Type genericType = field.getGenericType();
                 Types types = genericType instanceof ParameterizedType ? Types.typeOf(((ParameterizedType)genericType).getActualTypeArguments()[0]) : null;
                 fieldValue = objectBuilder.onCollection()
@@ -81,9 +121,39 @@ public class CommonObjectBuilder extends AbstractBuilder implements Builder {
                         .build(fieldType);
             }
             else {
-                fieldValue = objectBuilder.build(fieldType);
+                fieldValue = objectBuilder.onObject().setBaseName(fieldFullName)
+                        .build(fieldType);
+                objectBuilder.onObject().setBaseName(null);
             }
             ClassUtils.setProperty(o, field, fieldValue);
+        }
+    }
+
+    private Object takeFieldValue(String fieldName, Object value) {
+        if (value instanceof Generator) {
+            Generator generator = (Generator) value;
+            if (!generator.hasNext()) {
+                if (generator.isCyclic()) {
+                    generator.reset();
+                }
+                else {
+                    return null;
+                }
+            }
+            return generator.next();
+        }
+        else if (value instanceof Object[]) {
+            Object[] values = (Object[]) value;
+            if (values.length > 0) {
+                propertyValues.put(fieldName, Arrays.copyOfRange(values, 1, values.length));
+                return values[0];
+            }
+            else {
+                return null;
+            }
+        }
+        else {
+            return value;
         }
     }
 

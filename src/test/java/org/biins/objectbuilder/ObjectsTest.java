@@ -390,7 +390,7 @@ public class ObjectsTest {
 
     // todo - custom value
     // todo - custom custom generator -> map key
-    // todo - set strategy, with string
+    // todo - exclude field
 
     @Test
     public void realObjectTest() {

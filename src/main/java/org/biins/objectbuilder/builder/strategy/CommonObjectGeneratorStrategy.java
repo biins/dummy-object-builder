@@ -7,6 +7,6 @@ public enum CommonObjectGeneratorStrategy {
 
     DEFAULT,
     NULL,
-    VALUE;
+    VALUE
 
 }

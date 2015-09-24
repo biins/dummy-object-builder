@@ -22,7 +22,6 @@ public class CommonObject {
         public Inner() {
         }
 
-        // todo
         private short s;
     }
 
