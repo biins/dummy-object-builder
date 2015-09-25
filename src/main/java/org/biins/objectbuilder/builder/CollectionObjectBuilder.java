@@ -125,4 +125,8 @@ public class CollectionObjectBuilder extends AbstractCompositeBuilder implements
         Class<? extends Collection> collectionCls = CollectionTypeRegistry.getDefaultImpl((Class<? extends Collection>) collectionType);
         return CollectionTypeRegistry.getNewCollection(collectionCls, values);
     }
+
+    public Class<?> getElementType() {
+        return elementType.getType();
+    }
 }

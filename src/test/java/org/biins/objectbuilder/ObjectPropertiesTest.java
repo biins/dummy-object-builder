@@ -85,4 +85,40 @@ public class ObjectPropertiesTest {
 
     }
 
+    @Test
+    public void ignoredFieldsTest() {
+        Page page = new ObjectBuilder()
+                .setStrategyForAll("VALUE")
+                .onString().setGeneratorStrategy(StringGeneratorStrategy.EMPTY)
+                .onObject().onProperty("title", null, null)
+                .build(Page.class);
+
+        assertNull(page.getTitle());
+        assertNotNull(page.getArticleLayout());
+        assertNotNull(page.getFriendlyUrl());
+        assertNotNull(page.getLayout());
+
+        page = new ObjectBuilder()
+                .setStrategyForAll("VALUE")
+                .onString().setGeneratorStrategy(StringGeneratorStrategy.EMPTY)
+                .onObject().ignoreProperty("title")
+                .build(Page.class);
+
+        assertNull(page.getTitle());
+        assertNotNull(page.getArticleLayout());
+        assertNotNull(page.getFriendlyUrl());
+        assertNotNull(page.getLayout());
+
+        page = new ObjectBuilder().addIgnoredType(String.class, Article.class)
+                .setStrategyForAll("VALUE")
+                .onString().setGeneratorStrategy(StringGeneratorStrategy.EMPTY)
+                .onCollection().setSize(1)
+                .build(Page.class);
+
+        assertNull(page.getTitle());
+        assertNull(page.getArticleLayout());
+        assertNull(page.getFriendlyUrl());
+        assertNull(page.getLayout());
+        assertEquals(page.getArticles(), Collections.emptyList());
+    }
 }

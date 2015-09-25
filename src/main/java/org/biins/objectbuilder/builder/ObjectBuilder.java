@@ -208,6 +208,10 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
             return stringObjectBuilder.buildString();
         }
         else if (ClassUtils.isCollection(type)) {
+            Class<?> elementType = collectionObjectBuilder.getElementType();
+            if (elementType != null && ignoredTypes.contains(elementType)) {
+                return (T) Collections.emptyList();
+            }
             return collectionObjectBuilder.buildCollection(type);
         }
         else if (ClassUtils.isMap(type)) {
@@ -457,6 +461,10 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
 
         <T> T buildCollection(Class<T> type, Types elementType, int ... size) {
             return builder.buildCollection(type, elementType, size);
+        }
+
+        public Class<?> getElementType() {
+            return builder.getElementType();
         }
     }
 
