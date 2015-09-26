@@ -1,7 +1,9 @@
 package org.biins.objectbuilder.builder;
 
 import org.apache.commons.lang.Validate;
+import org.biins.objectbuilder.builder.generator.CyclicValuesGenerator;
 import org.biins.objectbuilder.builder.generator.Generator;
+import org.biins.objectbuilder.builder.generator.ValuesGenerator;
 import org.biins.objectbuilder.builder.strategy.CommonObjectGeneratorStrategy;
 import org.biins.objectbuilder.types.Types;
 import org.biins.objectbuilder.util.ClassUtils;
@@ -23,7 +25,7 @@ public class CommonObjectBuilder extends AbstractBuilder implements Builder {
     private final ObjectBuilder objectBuilder;
     private final Stack<Class<?>> typeStack;
     private final Set<String> ignoredProperties;
-    private final Map<String, Object> propertyValues;
+    private final Map<String, Generator> propertyValues;
     private CommonObjectGeneratorStrategy objectStrategy = CommonObjectGeneratorStrategy.DEFAULT;
     private String baseName;
 
@@ -44,10 +46,15 @@ public class CommonObjectBuilder extends AbstractBuilder implements Builder {
         return this;
     }
 
+    public void onProperty(String property, Object value) {
+        Validate.notNull(property);
+        propertyValues.put(property, new CyclicValuesGenerator<>(value));
+    }
+
     public void onProperty(String property, Object ... values) {
         Validate.notNull(property);
         Validate.notNull(values);
-        propertyValues.put(property, values);
+        propertyValues.put(property, new ValuesGenerator<>(values));
     }
 
     public <T> void onProperty(String property, Generator<T> generator) {
@@ -56,8 +63,8 @@ public class CommonObjectBuilder extends AbstractBuilder implements Builder {
         propertyValues.put(property, generator);
     }
 
-    public void ignoreProperty(String property) {
-        ignoredProperties.add(property);
+    public void ignoreProperty(String ... property) {
+        ignoredProperties.addAll(Arrays.asList(property));
     }
 
     @Override
@@ -104,7 +111,7 @@ public class CommonObjectBuilder extends AbstractBuilder implements Builder {
             Class<?> fieldType = field.getType();
             Object fieldValue;
             if (propertyValues.containsKey(fieldFullName)) {
-                fieldValue = takeFieldValue(fieldFullName, propertyValues.get(fieldFullName));
+                fieldValue = getValue(propertyValues.get(fieldFullName));
             }
             else if (ClassUtils.isCollection(fieldType)) {
                 Type genericType = field.getGenericType();
@@ -129,32 +136,12 @@ public class CommonObjectBuilder extends AbstractBuilder implements Builder {
         }
     }
 
-    private Object takeFieldValue(String fieldName, Object value) {
-        if (value instanceof Generator) {
-            Generator generator = (Generator) value;
-            if (!generator.hasNext()) {
-                if (generator.isCyclic()) {
-                    generator.reset();
-                }
-                else {
-                    return null;
-                }
-            }
-            return generator.next();
+    private Object getValue(Generator generator) {
+        if (!generator.hasNext() && generator.isCyclic()) {
+            generator.reset();
         }
-        else if (value instanceof Object[]) {
-            Object[] values = (Object[]) value;
-            if (values.length > 0) {
-                propertyValues.put(fieldName, Arrays.copyOfRange(values, 1, values.length));
-                return values[0];
-            }
-            else {
-                return null;
-            }
-        }
-        else {
-            return value;
-        }
+
+        return generator.hasNext() ? generator.next() : null;
     }
 
     private Type[] getGenericType(Field field) {

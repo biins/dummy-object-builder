@@ -41,6 +41,18 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
         mapObjectBuilder = new MapObjectBuilder(createMapBuilder());
     }
 
+    @Override
+    protected void reset() {
+        primitiveObjectBuilder.reset();
+        wrapperObjectBuilder.reset();
+        arrayObjectBuilder.reset();
+        stringObjectBuilder.reset();
+        collectionObjectBuilder.reset();
+        commonObjectBuilder.reset();
+        enumObjectBuilder.reset();
+        mapObjectBuilder.reset();
+    }
+
     protected org.biins.objectbuilder.builder.ArrayObjectBuilder createArrayBuilder() {
         return new org.biins.objectbuilder.builder.ArrayObjectBuilder(this);
     }
@@ -251,16 +263,7 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
         return resolvers;
     }
 
-    public abstract class AbstractTransitionsBuilder implements Builder {
-
-        @Override
-        public <T> List<T> build(Class<T> type, int count) {
-            List<T> list =  new ArrayList<>(count);
-            for (int i = 0; i < count; i++) {
-                list.add(build(type));
-            }
-            return list;
-        }
+    public abstract class AbstractTransitionsBuilder extends AbstractBuilder {
 
         public ObjectBuilder and() {
             return ObjectBuilder.this;
@@ -517,12 +520,17 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
         }
     }
 
-    public class CommonObjectBuilder extends AbstractBuilder {
+    public class CommonObjectBuilder extends AbstractTransitionsBuilder {
 
         private final org.biins.objectbuilder.builder.CommonObjectBuilder builder;
 
         public CommonObjectBuilder(org.biins.objectbuilder.builder.CommonObjectBuilder builder) {
             this.builder = builder;
+        }
+
+        @Override
+        void reset() {
+            builder.reset();
         }
 
         public CommonObjectBuilder setGeneratorStrategy(CommonObjectGeneratorStrategy strategy) {
@@ -532,6 +540,11 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
 
         CommonObjectBuilder setBaseName(String fieldFullName) {
             builder.setBaseName(fieldFullName);
+            return this;
+        }
+
+        public CommonObjectBuilder onProperty(String property, Object value) {
+            builder.onProperty(property, value);
             return this;
         }
 
@@ -545,7 +558,7 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
             return this;
         }
 
-        public CommonObjectBuilder ignoreProperty(String property) {
+        public CommonObjectBuilder ignoreProperty(String ... property) {
             builder.ignoreProperty(property);
             return this;
         }
@@ -559,7 +572,7 @@ public class ObjectBuilder extends AbstractBuilder implements Builder {
         }
     }
 
-    public class MapObjectBuilder extends AbstractBuilder {
+    public class MapObjectBuilder extends AbstractTransitionsBuilder {
 
         private final org.biins.objectbuilder.builder.MapObjectBuilder builder;
 

@@ -30,7 +30,12 @@ public class CyclicValuesGenerator<T> implements Generator<T> {
     @Override
     public T next() {
         if (index < values.length) {
-            return values[index++];
+            try {
+                return values[index];
+            }
+            finally {
+                index++;
+            }
         }
         else {
             throw new IllegalStateException();

@@ -13,9 +13,11 @@ public abstract class AbstractBuilder implements Builder {
         List<T> list =  new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
             list.add(build(type));
+            reset();
         }
         return list;
     }
 
+    void reset() {}
 
 }

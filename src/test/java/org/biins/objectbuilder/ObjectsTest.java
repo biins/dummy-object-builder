@@ -388,10 +388,6 @@ public class ObjectsTest {
 
     }
 
-    // todo - custom value
-    // todo - custom custom generator -> map key
-    // todo - exclude field
-
     @Test
     public void realObjectTest() {
         Page page = new ObjectBuilder()

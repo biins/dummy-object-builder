@@ -121,4 +121,73 @@ public class ObjectPropertiesTest {
         assertNull(page.getLayout());
         assertEquals(page.getArticles(), Collections.emptyList());
     }
+
+    @Test
+    public void fieldValuesTest() {
+        List<CommonObject> objs = new ObjectBuilder()
+                .setStrategyForAll("VALUE")
+                .onObject()
+                    .onProperty("primitiveObject.f", 123f)
+                    .onProperty("primitiveObject.i", 123)
+                    .onProperty("primitiveObject.l", 123l)
+                .build(CommonObject.class, 5);
+
+        for (CommonObject o : objs) {
+            assertEquals(o.primitiveObject.getF(), 123f);
+            assertEquals(o.primitiveObject.getI(), 123);
+            assertEquals(o.primitiveObject.getL(), 123l);
+        }
+    }
+
+    @Test
+    public void fieldValuesTest2() {
+        List<CommonObjects> objs = new ObjectBuilder()
+                .setStrategyForAll("VALUE")
+                .onObject()
+                    .onProperty("a.primitiveObject.f", 123f)
+                    .onProperty("b.primitiveObject.i", 123)
+                    .onProperty("c.primitiveObject.l", 123l)
+                    .onProperty("a.stringObject.string", "A")
+                    .onProperty("b.stringObject.string", "B")
+                    .onProperty("c.stringObject.string", "C")
+                    .onProperty("d", new Object[]{null})
+                .build(CommonObjects.class, 5);
+
+        for (CommonObjects o : objs) {
+            assertEquals(o.a.primitiveObject.getF(), 123f);
+            assertEquals(o.b.primitiveObject.getI(), 123);
+            assertEquals(o.c.primitiveObject.getL(), 123l);
+            assertEquals(o.a.stringObject.string, "A");
+            assertEquals(o.b.stringObject.string, "B");
+            assertEquals(o.c.stringObject.string, "C");
+            assertNull(o.d);
+        }
+    }
+
+    @Test
+    public void ignoredFieldValuesTest() {
+        List<CommonObjects> objs = new ObjectBuilder()
+                .setStrategyForAll("VALUE")
+                .onPrimitive(PrimitiveGeneratorStrategy.MAX)
+                .onObject().ignoreProperty(
+                        "a.primitiveObject.f",
+                        "b.primitiveObject.i",
+                        "c.primitiveObject.l",
+                        "a.stringObject.string",
+                        "b.stringObject.string",
+                        "c.stringObject.string",
+                        "d"
+                )
+                .build(CommonObjects.class, 5);
+
+        for (CommonObjects o : objs) {
+            assertEquals(o.a.primitiveObject.getF(), 0f);
+            assertEquals(o.b.primitiveObject.getI(), 0);
+            assertEquals(o.c.primitiveObject.getL(), 0l);
+            assertEquals(o.a.stringObject.string, null);
+            assertEquals(o.b.stringObject.string, null);
+            assertEquals(o.c.stringObject.string, null);
+            assertNull(o.d);
+        }
+    }
 }

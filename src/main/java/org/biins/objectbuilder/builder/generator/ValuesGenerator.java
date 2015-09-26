@@ -19,6 +19,7 @@ public class ValuesGenerator<T> implements Generator<T> {
 
     @Override
     public void reset() {
+        index = 0;
     }
 
     @Override
@@ -29,7 +30,12 @@ public class ValuesGenerator<T> implements Generator<T> {
     @Override
     public T next() {
         if (index < values.length) {
-            return values[index++];
+            try {
+                return values[index];
+            }
+            finally {
+                index++;
+            }
         }
         else {
             throw new IllegalStateException();

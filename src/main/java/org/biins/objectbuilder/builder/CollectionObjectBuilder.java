@@ -127,6 +127,6 @@ public class CollectionObjectBuilder extends AbstractCompositeBuilder implements
     }
 
     public Class<?> getElementType() {
-        return elementType.getType();
+        return elementType != null ? elementType.getType() : null;
     }
 }
