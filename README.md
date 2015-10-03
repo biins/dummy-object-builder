@@ -21,7 +21,7 @@ generated-object-builder:
   * wrapper
   * arrays
   * strings
-  * collectionc
+  * collections
   * enums
   * maps
   * common objects (and fields)
