@@ -48,3 +48,41 @@ List<Page> pages = new ObjectBuilder()
 // pages.get(1).getTitle() == "B"
 // pages.get(2).getTitle() == "C"
 ```
+
+## Full example
+```
+public class Animal {
+    private String speciesName;
+    private String genusName;
+    private int weight;
+    private int length;
+    private List<String> areas;
+    /* get & set */
+}
+```
+```
+List<Animal> animals = new ObjectBuilder()
+    .onObject()
+        .ignoreProperty("id")
+        // String speciesName;
+        .onProperty("speciesName", "ant", "bat", "cobra", "donkey", "eagle", "fox", "gorilla", "hyena", "jaguar", "kangaroo")
+        // String familyName;
+        .onProperty("genusName", "pharaoh", "big", "indian", "domestic", "sea", "vulpes", "mountain", "black-headed", "panther", "australian")
+        // int weight;
+        .onProperty("weight", 0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+        // int length;
+        .onProperty("length", 10, 9, 9, 7, 6, 5, 4, 3, 2, 1)
+        // List<String> areas;
+        .onProperty("areas", Arrays.asList("forrest ground"),
+                Arrays.asList("cave"),
+                Arrays.asList("desert", "India"),
+                Arrays.asList("America", "steppe"),
+                Arrays.asList("Europe east", "Asia"),
+                Arrays.asList("forrest", "Europe", "North America"),
+                Arrays.asList("Africa central", "rain forrest"),
+                Arrays.asList("Africa", "Asia south"),
+                Arrays.asList("South America"),
+                Arrays.asList("Australia")
+        )
+    .build(Animal.class, 10);
+```
